@@ -6,6 +6,8 @@
 import unittest
 # import responses
 
+from pdeo import database
+
 
 # if version_info[0] == 2:  # utf8 for python2
 #     from codecs import open
@@ -18,3 +20,6 @@ class PdeoDatabaseTestCase(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def testEntryPoints(self):
+        database.database
