@@ -1,0 +1,14 @@
+docs/_build
+*.pyc
+build/
+dist/
+pdeo.egg-info/
+.cache/
+.coverage
+coverage.xml
+test.py
+log.log
+pdeo.log
+test.log
+screenlog.0
+codecov.yml
