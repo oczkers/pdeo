@@ -4,13 +4,13 @@
 pdeo.core
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the pdeo basic methods.
+This module implements the pdeo database methods.
 
 """
 
-import requests
+# TODO: mysql
 
 
-class Core(object):
+class database(object):
     def __init__(self):
         pass
