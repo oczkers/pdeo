@@ -5,7 +5,7 @@ pdeo.cli
 ~~~~~~~~~~~~~~~~
 
 Usage:
-    pdeo
+    pdeo add <tmdb_id>
 
 Options:
     -h --help   Show this screen.
@@ -15,9 +15,16 @@ Options:
 
 from docopt import docopt
 
+from .database import database
+
 
 def __main__():
-    print('hi')
+    args = docopt(__doc__)
+    if args['add']:
+        db = database()
+        if not db.add(tmdb_id=args['<tmdb_id>']):
+            print('Movie already in database.')
+        print('Movie added successfully.')
 
 
 if __name__ == '__main__':
