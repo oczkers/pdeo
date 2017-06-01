@@ -72,5 +72,15 @@ class trakt(object):
     def load(self, category='movies'):
         """Loads watchlist."""
         # http://docs.trakt.apiary.io/#reference/sync/get-watchlist
-        movies = self.r.get('https://api.trakt.tv/sync/watchlist/%s' % category).json()
+        movies = []
+        rc = self.r.get('https://api.trakt.tv/sync/watchlist/%s' % category).json()
+        for m in rc:
+            movies.append({
+                'date': m['listed_at'],  # TODO: datetime
+                'category': m['type'],
+                'title': m[m['type']]['title'],
+                'year': m[m['type']]['year'],
+                'tmdb': m[m['type']]['ids'].get('tmdb'),
+                'imdb': m[m['type']]['ids'].get('imdb'),
+            })
         return movies
