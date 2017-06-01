@@ -21,11 +21,11 @@ class trakt(object):
         self.r = requests.Session()
         self.token = token
         if not self.token:
-            self.authenticate()
-        self.r.headers = self.__headers__
+            self.__authenticate()
+        self.r.headers = self.__headers
 
     @property
-    def __headers__(self):
+    def __headers(self):
         return {
             # 'Content-Type': 'application/json',  # requests manages this
             'Authorization': 'Bearer %s' % self.token,
@@ -33,7 +33,7 @@ class trakt(object):
             'trakt-api-key': client_id
         }
 
-    def __getToken__(self, code):
+    def __getToken(self, code):
         """Get token using device_code or refresh_token."""
         data = {'code': code,
                 'client_id': client_id,
@@ -54,7 +54,7 @@ class trakt(object):
             # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to much, respect interval
             return False
 
-    def authenticate(self):
+    def __authenticate(self):  # shouldn't this be private?
         """OAuth authentication - first run only."""
         # http://docs.trakt.apiary.io/#reference/authentication-devices/generate-new-device-codes
         data = {'client_id': client_id}
@@ -63,11 +63,11 @@ class trakt(object):
         print('1. Go to the following link: %s' % rc['verification_url'])
         print('2. Enter user code: %s' % rc['user_code'])
         input('done?')  # TODO: async? check instead of asking user
-        self.__getToken__(rc['device_code'])  # TODO?: raise error if false
+        self.__getToken(rc['device_code'])  # TODO?: raise error if false
 
-    def tokenRefresh(self):
+    def __tokenRefresh(self):  # shouldn't this be private?
         # token is valid for 3 months
-        self.__getToken__(self.token_refresh)  # TODO?: raise error if false
+        self.__getToken(self.token_refresh)  # TODO?: raise error if false
 
     def load(self, category='movies'):
         """Loads watchlist."""
