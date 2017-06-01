@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-pdeo.core
+pdeo.database.sql
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the pdeo database methods.
+This module implements the pdeo sql backend for database methods.
 
 """
 
@@ -13,12 +13,7 @@ This module implements the pdeo database methods.
 import sqlite3
 
 
-# class movie(object):
-#     def __init__(self, tmdb_id):
-#         self.imdb_id = tmdb_id
-
-
-class database(object):
+class sqlite(object):
     def __init__(self):
         self.db = self.load()
         self.create()  # TODO: create only if not existing DEBUG
@@ -43,6 +38,6 @@ class database(object):
         # TODO: check if not a duplicate
         try:
             self.db.execute('INSERT INTO pdeo (tmdb_id) VALUES (%s)' % tmdb_id)
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError:  # duplicate
             return False
         return True

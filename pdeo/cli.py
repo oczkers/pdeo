@@ -24,7 +24,8 @@ def __main__():
         db = database()
         if not db.add(tmdb_id=args['<tmdb_id>']):
             print('Movie already in database.')
-        print('Movie added successfully.')
+        else:
+            print('Movie added successfully.')
 
 
 if __name__ == '__main__':
