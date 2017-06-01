@@ -27,43 +27,47 @@ class trakt(object):
     @property
     def __headers__(self):
         return {
-            # 'Content-Type': 'application/json',  # requests does this
+            # 'Content-Type': 'application/json',  # requests manages this
             'Authorization': 'Bearer %s' % self.token,
             'trakt-api-version': '2',
             'trakt-api-key': client_id
         }
 
+    def __getToken__(self, code):
+        """Get token using device_code or refresh_token."""
+        data = {'code': code,
+                'client_id': client_id,
+                'client_secret': client_secret}
+        rc = self.r.post('https://api.trakt.tv/oauth/device/token', data=data)
+        if rc.status_code == 200:
+            rc = rc.json()
+            self.token = rc['access_token']
+            # needed for refresh without asking user
+            self.token_refresh = rc['refresh_token']
+            # rc['created_at']  # timestamp
+            # rc['expires_in']  # 7200 = 3 months?
+            return True
+        elif rc.status_code == 400:  # waiting for user accept
+            # TODO: sleep, recheck or whatever
+            pass
+        else:
+            # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to much, respect interval
+            return False
+
     def authenticate(self):
         """OAuth authentication - first run only."""
         # http://docs.trakt.apiary.io/#reference/authentication-devices/generate-new-device-codes
-        data = {'client_id': client_id}  # json.loads?
+        data = {'client_id': client_id}
         rc = self.r.post('https://api.trakt.tv/oauth/device/code', data=data).json()
         # TODO: automatically open browser link
         print('1. Go to the following link: %s' % rc['verification_url'])
         print('2. Enter user code: %s' % rc['user_code'])
         input('done?')  # TODO: async? check instead of asking user
-
-        data = {'code': rc['device_code'],
-                'client_id': client_id,
-                'client_secret': client_secret}  # json.loads?
-        rc = self.r.post('https://api.trakt.tv/oauth/device/token', data=data)
-        if rc.status_code == 200:
-            rc = rc.json()
-            self.token = rc['access_token']
-            self.token_refresh = rc['refresh_token']  # needed for refresh without asking user
-            # rc['created_at']  # timestamp
-            # rc['expires_in']  # 7200 = 3 months?
-            return True
-        elif rc.status_code == 400:  # waiting for user accept
-            pass
-        else:
-            return False  # TODO?: raise error instead of returing false
-
-        # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to much, respect interval
+        self.__getToken__(rc['device_code'])  # TODO?: raise error if false
 
     def tokenRefresh(self):
         # token is valid for 3 months
-        pass
+        self.__getToken__(self.token_refresh)  # TODO?: raise error if false
 
     def load(self, category='movies'):
         """Loads watchlist."""
