@@ -13,6 +13,7 @@ Options:
     --version                           Show version.
     -d DIR, --destination DIR           Destination dir for torrent files [default: .]
     -q QUALITY, --quality QUALITY       Desired quality rhd/hd/uhd [default: hd] - doesn't work yet  # TODO: resolution and bitrate instead?
+    --strict                            Strict search, don't download if uncertain.  # TODO: implement
 
 Trakt options:
     -t TOKEN, --token TOKEN             OAuth token.

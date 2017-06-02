@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for pdeo.database"""
-
-# TODO: tests for each backend
+"""Tests for pdeo.database.sql"""
 
 
 import unittest
 # import responses
 
-# from pdeo import database
+from pdeo.database import sql
 
 
 # if version_info[0] == 2:  # utf8 for python2
 #     from codecs import open
 
 
-class PdeoDatabaseTestCase(unittest.TestCase):
+class PdeoDatabaseSqlTestCase(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -24,7 +22,5 @@ class PdeoDatabaseTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # def testEntryPoints(self):
-    #     database.Database
-
-    # TODO: generic tests
+    def testEntryPoints(self):
+        sql.Database
