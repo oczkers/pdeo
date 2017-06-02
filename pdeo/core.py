@@ -9,7 +9,7 @@ This module implements the pdeo basic methods.
 """
 
 
-from .database import trakt  # TODO: mysql, sqlite
+from .databases import trakt  # TODO: mysql, sqlite
 from .providers import thepiratebay
 
 

@@ -7,7 +7,7 @@
 import unittest
 # import responses
 
-from pdeo.database import sql
+from pdeo.databases import sql
 
 
 # if version_info[0] == 2:  # utf8 for python2

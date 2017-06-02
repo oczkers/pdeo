@@ -9,7 +9,7 @@
 import unittest
 # import responses
 
-# from pdeo import database
+# from pdeo import databases
 
 
 # if version_info[0] == 2:  # utf8 for python2

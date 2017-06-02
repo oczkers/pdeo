@@ -1,26 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for pdeo.database.trakt"""
-
+"""Tests for pdeo.providers.torrentday"""
 
 import unittest
 # import responses
 
-from pdeo.database import trakt
-
+from pdeo.providers import torrentday
 
 # if version_info[0] == 2:  # utf8 for python2
 #     from codecs import open
 
 
-class PdeoDatabaseTraktTestCase(unittest.TestCase):
+class PdeoProvidersTorrentdayTestCase(unittest.TestCase):
 
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
-
-    def testEntryPoints(self):
-        trakt.Database

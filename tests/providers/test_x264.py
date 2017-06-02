@@ -6,6 +6,8 @@
 import unittest
 # import responses
 
+from pdeo.providers import x264
+
 
 # if version_info[0] == 2:  # utf8 for python2
 #     from codecs import open

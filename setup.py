@@ -15,6 +15,8 @@ __copyright__ = 'Copyright 2017 Piotr Staroszczyk'
 
 packages = [
     __title__,
+    '%s.databases' % __title__,
+    '%s.providers' % __title__,
     # '%s.modules' % __title__,
 ]
 
