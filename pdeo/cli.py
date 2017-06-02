@@ -18,6 +18,9 @@ Options:
 Trakt options:
     -t TOKEN, --token TOKEN             OAuth token.
 
+Debug options:
+    --all                               Display all found torrents instead of one.
+
 """
 
 # TODO: single movie search
@@ -40,9 +43,13 @@ def __main__():
     else:
         print('trakt.')
         p = Core()
+        torrents = p.check('logan', 2017)
         print('FOUND:')
-        for i in p.check('logan', 2017):
-            print(i)
+        if args['--all']:
+            for i in torrents:
+                print(i)
+        else:
+            print(torrents[0])
     # if args['add']:
     #     db = database()
     #     if not db.add(tmdb_id=args['<tmdb_id>']):
