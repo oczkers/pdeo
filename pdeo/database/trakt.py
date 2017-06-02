@@ -15,7 +15,7 @@ client_id = '7b52b4d5eb1105fe4d0e0f479fa00f3d58f671e1e8916bd237ad0a7b3a674a99'
 client_secret = '8fdbde42366852783faaf1612509b06d4211a9aff747ba1740056a72be859cf2'
 
 
-class database(object):
+class Database(object):
     def __init__(self, token=None):
         # TODO?: saving token, token_refresh
         self.r = requests.Session()

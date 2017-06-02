@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-pdeo.providers.polishsource
+pdeo.providers.thepiratebay
 ~~~~~~~~~~~~~~~~~~~~~
 
-This module implements the pdeo polishsource.cz provider methods.
+This module implements the pdeo thepiratebay.org backend for provider methods.
 
 """
 

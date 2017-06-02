@@ -13,7 +13,7 @@ This module implements the pdeo sql backend for database methods.
 import sqlite3
 
 
-class database(object):
+class Database(object):
     def __init__(self):
         self.db = self.load()
         self.create()  # TODO: create only if not existing DEBUG
