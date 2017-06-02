@@ -35,5 +35,11 @@ class BaseProvider(object):
         self.r = requests.Session()
         self.r.headers = headers
 
-    # TODO: def parse
-    #   using BeautifulSoup(markup, "html.parser") or BeautifulSoup(markup, "lxml") if available
+    # search method implemented by specific provider
+
+    def _sort(self, torrents):
+        def key(torrents):
+            return (torrents['score'],  # sorting by score, size, seeders+leechers
+                    torrents['size'],
+                    torrents['seeders'] + torrents['leechers'])
+        return sorted(torrents, key=key, reverse=True)
