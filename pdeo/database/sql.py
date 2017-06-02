@@ -13,7 +13,7 @@ This module implements the pdeo sql backend for database methods.
 import sqlite3
 
 
-class sqlite(object):
+class database(object):
     def __init__(self):
         self.db = self.load()
         self.create()  # TODO: create only if not existing DEBUG
@@ -25,7 +25,7 @@ class sqlite(object):
         con.isolation_level = None  # autocommit
         return con.cursor()
 
-    def create(self):
+    def create(self):  # private?
         """Creates database structure."""
         self.db.execute('''CREATE TABLE IF NOT EXISTS pdeo (
             id INTEGER PRIMARY KEY,

@@ -12,6 +12,7 @@ Options:
     -h, --help                          Show this screen.
     --version                           Show version.
     -d DIR, --destination DIR           Destination dir for torrent files [default: .]
+    -q QUALITY, --quality QUALITY       Desired quality rhd/hd/uhd [default: hd]  # TODO: resolution and bitrate instead?
 
 Trakt options:
     -t TOKEN, --token TOKEN             OAuth token.
@@ -21,7 +22,7 @@ Trakt options:
 from docopt import docopt
 
 from . import __title__, __version__
-from .database import database
+from .core import Core
 
 
 version_text = '%s v%s' % (__title__, __version__)
@@ -35,7 +36,8 @@ def __main__():
         print('Mysql / Sqlite is not implementet yet.')
     else:
         print('trakt.')
-        pass
+        p = Core()
+        p.check()
     # if args['add']:
     #     db = database()
     #     if not db.add(tmdb_id=args['<tmdb_id>']):
