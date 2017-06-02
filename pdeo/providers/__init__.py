@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pdeo.database
+pdeo.provider
 ~~~~~~~~~~~~~~~~~~~~~
 
 This module implements the pdeo provider base methods.
@@ -10,12 +10,11 @@ This module implements the pdeo provider base methods.
 
 import requests
 
-# from . import sql as database
-# from . import trakt as database
 
+# all provider modules should have:
+#   search()  <-- {torrent_file, magnet}
 
-# all database modules should have:
-#   load() <-- loading watchlist, returning {date, category, title, year, tmdb, imdb}
+# TODO?: score based on trusted user, seeders, leechers etc.
 
 
 # chrome 58 @ win10
@@ -35,3 +34,6 @@ class BaseProvider(object):
     def __init__(self, username=None, passwd=None):
         self.r = requests.Session()
         self.r.headers = headers
+
+    # TODO: def parse
+    #   using BeautifulSoup(markup, "html.parser") or BeautifulSoup(markup, "lxml") if available

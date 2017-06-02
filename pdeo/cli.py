@@ -13,7 +13,7 @@ Options:
     --version                           Show version.
     -d DIR, --destination DIR           Destination dir for torrent files [default: .]
     -q QUALITY, --quality QUALITY       Desired quality rhd/hd/uhd [default: hd] - doesn't work yet  # TODO: resolution and bitrate instead?
-    --strict                            Strict search, don't download if uncertain.  # TODO: implement
+    --strict                            Strict search, don't download if uncertain.  # TODO: implement this or somekind of score
 
 Trakt options:
     -t TOKEN, --token TOKEN             OAuth token.
@@ -40,7 +40,9 @@ def __main__():
     else:
         print('trakt.')
         p = Core()
-        print(p.check('logan', 2017))
+        print('FOUND:')
+        for i in p.check('logan', 2017):
+            print(i)
     # if args['add']:
     #     db = database()
     #     if not db.add(tmdb_id=args['<tmdb_id>']):
