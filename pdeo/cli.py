@@ -20,6 +20,8 @@ Trakt options:
 
 """
 
+# TODO: single movie search
+
 from docopt import docopt
 
 from . import __title__, __version__
@@ -38,7 +40,7 @@ def __main__():
     else:
         print('trakt.')
         p = Core()
-        print(p.check())
+        print(p.check('logan', 2017))
     # if args['add']:
     #     db = database()
     #     if not db.add(tmdb_id=args['<tmdb_id>']):

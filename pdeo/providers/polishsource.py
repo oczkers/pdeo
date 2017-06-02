@@ -10,10 +10,12 @@ This module implements the pdeo polishsource.cz provider methods.
 
 import requests
 
+from . import BaseProvider
 
-class Provider(object):
+
+class Provider(BaseProvider):
     def __init__(self):
-        pass
+        super().__init__()
 
     def search(self, title):
         """Search for torrents. Return [{torrent_file, magnet, quality}]."""

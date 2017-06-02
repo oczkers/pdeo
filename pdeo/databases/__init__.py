@@ -15,3 +15,5 @@ This module implements the pdeo database methods.
 
 # all database modules should have:
 #   load() <-- loading watchlist, returning {date, category, title, year, tmdb, imdb}
+
+# TODO: movie as an object
