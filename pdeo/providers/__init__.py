@@ -9,6 +9,7 @@ This module implements the pdeo provider base methods.
 """
 
 import requests
+import re
 
 
 # all provider modules should have:
@@ -48,3 +49,9 @@ class BaseProvider(object):
         """Search and choose best torrent."""
         torrents = self.search(title=title, year=year, imdb=imdb)
         return torrents[0]
+
+    def magnetToTorrent(self, magnet):
+        """'Converts' magnet to torrent file. This method probably won't work with private trackers."""
+        hash = re.search('urn:btih:(.+?)&', magnet).group(1)
+        torrent_file = self.r.get('https://itorrents.org/torrent/%s.torrent' % hash).content  # TODO?: don't use the same session
+        return torrent_file

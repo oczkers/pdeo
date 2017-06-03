@@ -31,8 +31,7 @@ class Provider(BaseProvider):
         i = re.search('(tt[0-9]{4,7})', rc)
         if i:
             imdb = i.group(1)  # or None
-        else:
-            print(url)
+        else: print('INFO: imdb id not found, please verify: %s' % url)  # DEBUG
         return {'imdb': imdb}
 
     def search(self, title, year, imdb):  # imdb tmdb
@@ -60,6 +59,7 @@ class Provider(BaseProvider):
             leechers = tds[6].string  # int?
 
             details = self.detailsPage(details_link)  # TODO: do this only if we've got imdb to check
+            torrent_file = self.magnetToTorrent(magnet)  # TODO: there is http request so it should be used only for best torrent
 
             # score  # TODO: move to BaseProvider
             # TODO: score values in config
@@ -75,6 +75,7 @@ class Provider(BaseProvider):
                              'seeders': seeders,
                              'leechers': leechers,
                              'score': score,
-                             'imdb': details['imdb']})
+                             'imdb': details['imdb'],
+                             'torrent_file': torrent_file})
 
         return self._sort(torrents)
