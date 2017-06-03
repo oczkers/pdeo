@@ -40,20 +40,14 @@ class BaseProvider(object):
 
     # search method implemented by specific provider
 
-    def _sort(self, torrents):
+    def __sort(self, torrents):
+        """Sort torrents based on score, size, seeders+leechers."""
+        # TODO: this is crucial method, allways needs improvement
         def key(torrents):
-            return (torrents['score'],  # sorting by score, size, seeders+leechers
+            return (torrents['score'],
                     torrents['size'],
                     torrents['seeders'] + torrents['leechers'])
         return sorted(torrents, key=key, reverse=True)
-
-    def choose(self, title, year, imdb):
-        """Search and choose best torrent."""
-        torrents = self.search(title=title, year=year, imdb=imdb)
-        if torrents:
-            return torrents[0]
-        else:
-            return None
 
     def magnetToTorrent(self, magnet):
         """'Converts' magnet to torrent file. This method probably won't work with private trackers."""
@@ -65,8 +59,17 @@ class BaseProvider(object):
     def download(self, url=None, magnet=None):
         """Download torrent file using url or magnetToTorrent."""
         # TODO: validate url download
-        # TODO?: Return original torrent file name
         if url:
             return self.r.get(url).content
         else:
             return self.magnetToTorrent(magnet)
+
+    def search(self, title, year, imdb):
+        """Search the one and only torrent. Return torrent file."""
+        torrents = self.searchAll(title=title, year=year, imdb=imdb)
+        if torrents:
+            torrent = self.__sort(torrents)[0]
+            torrent['torrent'] = self.download(torrent['url'], torrent['magnet'])
+            return torrent
+        else:
+            return None

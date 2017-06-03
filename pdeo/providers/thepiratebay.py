@@ -24,21 +24,24 @@ class Provider(BaseProvider):
         # TODO: move to BaseProvider
         # TODO?: seach only specific space, not whole page
         # bs = BeautifulSoup(rc, 'html.parser')
-        # nfo = bs.find('div', class_='nfo')
-        # print(nfo)
-        # imdb_id = re.search('(tt[0-9]{4,7})', str(nfo)).group(1)
+        # rc = bs.find('div', class_='details')
+        # print(rc)
+        # imdb_id = re.search('(tt[0-9]{4,7})', str(rc)).group(1)
         rc = self.r.get(url).text
         i = re.search('(tt[0-9]{4,7})', rc)
         if i:
             imdb = i.group(1)  # or None
         return {'imdb': imdb}
 
-    def search(self, title, year, imdb):  # imdb tmdb
-        """Search for torrents. Return [{torrent_file, magnet, quality}]."""
+    def searchAll(self, title, year, imdb):  # imdb tmdb
+        """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
+        # TODO: quality, resolution, bitrate
+        # TODO: min_size, max_size
+        # TODO: exclude string param (for example KORSUB)
+        # TODO?: bump score if well known group name found
         # TODO?: drop year or validate on imdb/tmdb first
         print('Searching: %s %s %s' % (title, year, imdb))
         # TODO: async
-        # TODO?: detect codecs
         self.r.cookies.set('lw', 's', domain='thepiratebay.org')  # single view, better for parsing (?)
         category = 207  # hd-movies
         page = 0  # no need to look further
@@ -80,4 +83,4 @@ class Provider(BaseProvider):
                              'imdb': details['imdb'],
                              'url': None})  # TODO: scheme in BaseProvider
 
-        return self._sort(torrents)
+        return torrents
