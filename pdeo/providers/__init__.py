@@ -18,7 +18,7 @@ import requests
 
 
 # chrome 58 @ win10
-headers = {
+headers = {  # TODO?: move to config
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Encoding': 'gzip,deflate,sdch, br',
@@ -43,3 +43,8 @@ class BaseProvider(object):
                     torrents['size'],
                     torrents['seeders'] + torrents['leechers'])
         return sorted(torrents, key=key, reverse=True)
+
+    def choose(self, title, year):
+        """Search and choose best torrent."""
+        torrents = self.search(title=title, year=year)
+        return torrents[0]

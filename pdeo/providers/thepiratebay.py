@@ -18,6 +18,21 @@ class Provider(BaseProvider):
     def __init__(self, username=None, passwd=None):
         super().__init__()
 
+    def detailsPage(self, url):
+        """Parse details page. Return {imdb, tmdb}."""
+        imdb = None
+        # TODO: move to BaseProvider
+        # TODO?: seach only specific space, not whole page
+        # bs = BeautifulSoup(rc, 'html.parser')
+        # nfo = bs.find('div', class_='nfo')
+        # print(nfo)
+        # imdb_id = re.search('(tt[0-9]{4,7})', str(nfo)).group(1)
+        rc = self.r.get(url).text
+        i = re.search('(tt[0-9]{4,7})', rc)
+        if i:
+            imdb = i.group(1)  # or None
+        return {'imdb': imdb}
+
     def search(self, title, year):  # imdb tmdb
         """Search for torrents. Return [{torrent_file, magnet, quality}]."""
         # TODO?: detect codecs
@@ -41,16 +56,22 @@ class Provider(BaseProvider):
             seeders = tds[5].string  # int? # TODO?: bump score based on this or maybe lower if not enought
             leechers = tds[6].string  # int?
 
+            details = self.detailsPage(details_link)
+
+            # score  # TODO: move to BaseProvider
+            # TODO: score values in config
             score = 0
             score += (0, 10)[tds[3].find('img', alt=re.compile('Trusted')) is not None]
             score += (0, 20)[tds[3].find('img', alt=re.compile('VIP')) is not None]
             score += (0, 50)[tds[3].find('img', alt=re.compile('Moderator')) is not None]
+            score += (0, 50)[details['imdb'] is not None]
 
             torrents.append({'name': name,
                              'magnet': magnet,
                              'size': size,
                              'seeders': seeders,
                              'leechers': leechers,
-                             'score': score})
+                             'score': score,
+                             'imdb': details['imdb']})
 
         return self._sort(torrents)

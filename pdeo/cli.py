@@ -22,13 +22,20 @@ Trakt options:
 
 # TODO: single movie search
 
+import sys
 from docopt import docopt
 
 from . import __title__, __version__
 from .core import Core
+from .databases import trakt
 
 
 version_text = '%s v%s' % (__title__, __version__)
+
+
+def run(database):
+    p = Core(database=database)
+    print(p.get('logan', 2017))
 
 
 def __main__():
@@ -36,19 +43,11 @@ def __main__():
     print(args)
     if args['mysql'] or args['sqlite']:
         # TODO: sql database
-        print('Mysql / Sqlite is not implementet yet.')
+        # database = sql
+        sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
-        print('trakt.')
-        p = Core()
-        print('FOUND:')
-        for i in p.check('logan', 2017):
-            print(i)
-    # if args['add']:
-    #     db = database()
-    #     if not db.add(tmdb_id=args['<tmdb_id>']):
-    #         print('Movie already in database.')
-    #     else:
-    #         print('Movie added successfully.')
+        database = trakt
+    run(database)
 
 
 if __name__ == '__main__':
