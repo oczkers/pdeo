@@ -31,11 +31,12 @@ class Provider(BaseProvider):
         i = re.search('(tt[0-9]{4,7})', rc)
         if i:
             imdb = i.group(1)  # or None
-        else: print('INFO: imdb id not found, please verify: %s' % url)  # DEBUG
         return {'imdb': imdb}
 
     def search(self, title, year, imdb):  # imdb tmdb
         """Search for torrents. Return [{torrent_file, magnet, quality}]."""
+        # TODO?: drop year or validate on imdb/tmdb first
+        print('Searching: %s %s %s' % (title, year, imdb))
         # TODO: async
         # TODO?: detect codecs
         self.r.cookies.set('lw', 's', domain='thepiratebay.org')  # single view, better for parsing (?)
@@ -48,6 +49,8 @@ class Provider(BaseProvider):
         torrents = []
         bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
         table = bs.find('table', attrs={'id': 'searchResult'})
+        if not table:  # TODO: refactorization
+            return torrents
         entries = table.findAll('tr', class_=None)
         for i in entries:
             tds = i.find_all('td')
@@ -59,7 +62,6 @@ class Provider(BaseProvider):
             leechers = tds[6].string  # int?
 
             details = self.detailsPage(details_link)  # TODO: do this only if we've got imdb to check
-            torrent_file = self.magnetToTorrent(magnet)  # TODO: there is http request so it should be used only for best torrent
 
             # score  # TODO: move to BaseProvider
             # TODO: score values in config
@@ -76,6 +78,6 @@ class Provider(BaseProvider):
                              'leechers': leechers,
                              'score': score,
                              'imdb': details['imdb'],
-                             'torrent_file': torrent_file})
+                             'url': None})  # TODO: scheme in BaseProvider
 
         return self._sort(torrents)

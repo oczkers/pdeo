@@ -35,7 +35,7 @@ version_text = '%s v%s' % (__title__, __version__)
 
 def run(database):
     p = Core(database=database)
-    print(p.get('logan', 2017, 'tt3315342'))
+    p.get()
 
 
 def __main__():

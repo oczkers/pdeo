@@ -36,6 +36,8 @@ class BaseProvider(object):
         self.r = requests.Session()
         self.r.headers = headers
 
+    # TODO?: __get instead of self.r.get
+
     # search method implemented by specific provider
 
     def _sort(self, torrents):
@@ -48,10 +50,23 @@ class BaseProvider(object):
     def choose(self, title, year, imdb):
         """Search and choose best torrent."""
         torrents = self.search(title=title, year=year, imdb=imdb)
-        return torrents[0]
+        if torrents:
+            return torrents[0]
+        else:
+            return None
 
     def magnetToTorrent(self, magnet):
         """'Converts' magnet to torrent file. This method probably won't work with private trackers."""
+        # TODO: validate
         hash = re.search('urn:btih:(.+?)&', magnet).group(1)
         torrent_file = self.r.get('https://itorrents.org/torrent/%s.torrent' % hash).content  # TODO?: don't use the same session
         return torrent_file
+
+    def download(self, url=None, magnet=None):
+        """Download torrent file using url or magnetToTorrent."""
+        # TODO: validate url download
+        # TODO?: Return original torrent file name
+        if url:
+            return self.r.get(url).content
+        else:
+            return self.magnetToTorrent(magnet)
