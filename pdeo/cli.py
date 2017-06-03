@@ -23,14 +23,33 @@ Trakt options:
 # TODO: single movie search
 
 import sys
+import yaml
 from docopt import docopt
 
 from . import __title__, __version__
 from .core import Core
-from .databases import trakt
 
 
 version_text = '%s v%s' % (__title__, __version__)
+
+config_file = 'pdeo.yml'
+
+
+try:
+    config = yaml.safe_load(open(config_file, 'r'))
+except FileNotFoundError as e:
+    print(e)  # config does not exists, load default
+    config = {
+        'trakt': {'token': None,
+                  'token_date': None,
+                  'token_refresh': None}
+    }
+except yaml.YAMLError as e:
+    print(e)  # config cannot be loaded
+
+
+print(config)
+yaml.safe_dump(config, open(config_file, 'w'), default_flow_style=False)
 
 
 def run(database):
@@ -46,7 +65,7 @@ def __main__():
         # database = sql
         sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
-        database = trakt
+        database = 'trakt'
     run(database)
 
 

@@ -14,10 +14,11 @@ from .providers import thepiratebay  # TODO?: vpn/proxy
 
 
 class Core(object):
-    def __init__(self, database=trakt):
-        self.db = database.Database()
-
-    # TODO: def check multiple
+    def __init__(self, database='trakt'):
+        if database == 'trakt':
+            self.db = trakt.Database()
+        else:
+            raise NotImplementedError('Only trakt works for now.')
 
     def get(self, provider=thepiratebay, username=None, passwd=None):
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file

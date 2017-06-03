@@ -51,7 +51,7 @@ class Database(object):
             # TODO: sleep, recheck or whatever
             pass
         else:
-            # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to much, respect interval
+            # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to often, respect interval
             return False
 
     def __authenticate(self):  # shouldn't this be private?
