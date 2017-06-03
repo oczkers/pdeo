@@ -20,9 +20,9 @@ class Core(object):
 
     # TODO: def check multiple
 
-    def get(self, title, year, provider=thepiratebay, username=None, passwd=None):  # , quality='hd'
+    def get(self, title, year, imdb=None, provider=thepiratebay, username=None, passwd=None):  # , quality='hd'
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
         # TODO: resoltion & bitrate
         # TODO?: convert? magnet to torrent file
         prov = provider.Provider(username=username, passwd=passwd)  # TODO: init provider once, don't relogin on every request
-        return prov.choose(title=title, year=year)
+        return prov.choose(title=title, year=year, imdb=imdb)

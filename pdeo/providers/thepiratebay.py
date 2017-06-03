@@ -18,7 +18,7 @@ class Provider(BaseProvider):
     def __init__(self, username=None, passwd=None):
         super().__init__()
 
-    def detailsPage(self, url):
+    def detailsPage(self, url):  # TODO: language
         """Parse details page. Return {imdb, tmdb}."""
         imdb = None
         # TODO: move to BaseProvider
@@ -31,10 +31,13 @@ class Provider(BaseProvider):
         i = re.search('(tt[0-9]{4,7})', rc)
         if i:
             imdb = i.group(1)  # or None
+        else:
+            print(url)
         return {'imdb': imdb}
 
-    def search(self, title, year):  # imdb tmdb
+    def search(self, title, year, imdb):  # imdb tmdb
         """Search for torrents. Return [{torrent_file, magnet, quality}]."""
+        # TODO: async
         # TODO?: detect codecs
         self.r.cookies.set('lw', 's', domain='thepiratebay.org')  # single view, better for parsing (?)
         category = 207  # hd-movies
@@ -56,7 +59,7 @@ class Provider(BaseProvider):
             seeders = tds[5].string  # int? # TODO?: bump score based on this or maybe lower if not enought
             leechers = tds[6].string  # int?
 
-            details = self.detailsPage(details_link)
+            details = self.detailsPage(details_link)  # TODO: do this only if we've got imdb to check
 
             # score  # TODO: move to BaseProvider
             # TODO: score values in config
@@ -64,7 +67,7 @@ class Provider(BaseProvider):
             score += (0, 10)[tds[3].find('img', alt=re.compile('Trusted')) is not None]
             score += (0, 20)[tds[3].find('img', alt=re.compile('VIP')) is not None]
             score += (0, 50)[tds[3].find('img', alt=re.compile('Moderator')) is not None]
-            score += (0, 50)[details['imdb'] is not None]
+            score += (0, 50)[details['imdb'] == imdb and imdb is not None]  # TODO: same as details
 
             torrents.append({'name': name,
                              'magnet': magnet,

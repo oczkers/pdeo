@@ -44,7 +44,7 @@ class BaseProvider(object):
                     torrents['seeders'] + torrents['leechers'])
         return sorted(torrents, key=key, reverse=True)
 
-    def choose(self, title, year):
+    def choose(self, title, year, imdb):
         """Search and choose best torrent."""
-        torrents = self.search(title=title, year=year)
+        torrents = self.search(title=title, year=year, imdb=imdb)
         return torrents[0]
