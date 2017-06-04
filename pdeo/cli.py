@@ -29,9 +29,6 @@ from docopt import docopt
 from . import __title__, __version__
 from .core import Core
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = IOError
-
 
 version_text = '%s v%s' % (__title__, __version__)
 
@@ -41,7 +38,7 @@ config_file = 'pdeo.yml'
 # pathlib?
 try:
     config = yaml.safe_load(open(config_file, 'r'))
-except FileNotFoundError as e:
+except IOError as e:  # FileNotFoundError doesn't exists in python2 AND pypy3
     print(e)  # config does not exists, load default
     config = {
         'trakt': {'token': None,
