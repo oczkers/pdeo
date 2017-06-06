@@ -20,7 +20,7 @@ class Core(object):
         else:
             raise NotImplementedError('Only trakt works for now.')
 
-    def get(self, provider=thepiratebay, username=None, passwd=None, min_size=0):
+    def get(self, provider=thepiratebay, username=None, passwd=None, destination='.', min_size=0):
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
         # TODO?: initializate provider before calling this?
         # TODO: quality, resoltion & bitrate
@@ -32,8 +32,8 @@ class Core(object):
         for movie in movies:
             torrent = prov.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], min_size=min_size)
             if torrent:  # TODO: i don't like this if
-                filename = '%s.torrent' % torrent['name']
-                open(filename, 'wb').write(torrent['torrent'])  # with?
+                filepath = '%s/%s.torrent' % (destination, torrent['name'])
+                open(filepath, 'wb').write(torrent['torrent'])  # with?
                 print('INFO: torrent downloaded (%s).' % torrent['name'])
             else:
                 print('INFO: torrent not found: %s' % movie['title'])  # DEBUG

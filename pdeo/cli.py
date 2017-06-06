@@ -32,9 +32,9 @@ from .core import Core
 version_text = '%s v%s' % (__title__, __version__)
 
 
-def run(database, min_size):
+def run(database, min_size, destination):
     p = Core(database=database)
-    p.get(min_size=min_size)
+    p.get(min_size=min_size, destination=destination)
 
 
 def __main__():
@@ -46,7 +46,7 @@ def __main__():
         sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
         database = 'trakt'
-    run(database, min_size=int(args['--min_size']))
+    run(database, min_size=int(args['--min_size']), destination=args['--destination'])
 
 
 if __name__ == '__main__':
