@@ -18,7 +18,7 @@ pdeo
     :target: https://codecov.io/github/oczkers/pdeo
     :alt: codecov.io
 
-pdeo is a very simple alternative for radarr/couchpotato - automatically downloading movies from torrent.
+pdeo is a very simple alternative for radarr/couchpotato but using trakt as a watchlist database - automatically downloading movies from torrent.
 It is written entirely in Python.
 
 
@@ -34,25 +34,42 @@ Installation
 
 (not working yet)
 
-.. code-block
+.. code-block:: bash
 
-    pip install pdeo
+    computer ~ # pip install pdeo
 
 
 Usage
 =====
 
 To be done.
+Look at pdeo/cli.py for more info.
 
 .. code-block:: bash
 
-    computer ~ # python pdeo.py
+    computer ~ # pdeo
 
 
 Daemon
 ------
 
 simple cronjob?
+
+
+List of providers
+-----------------
+
+- thepiratebay
+
+
+Development
+===========
+
+
+Provider
+--------
+
+Various bittorrent tracker websites.
 
 
 License
