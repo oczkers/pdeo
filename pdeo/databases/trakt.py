@@ -10,17 +10,19 @@ This module implements the pdeo trakt.tv backend for database methods.
 
 import requests
 
+from ..config import Config
+
 
 client_id = '7b52b4d5eb1105fe4d0e0f479fa00f3d58f671e1e8916bd237ad0a7b3a674a99'
 client_secret = '8fdbde42366852783faaf1612509b06d4211a9aff747ba1740056a72be859cf2'
 
 
 class Database(object):
-    def __init__(self, token=None):
+    def __init__(self):
         # TODO?: saving token, token_refresh
+        self.config = Config()
         self.r = requests.Session()
-        self.token = token
-        if not self.token:
+        if not self.config.trakt['token']:
             self.__authenticate()
         self.r.headers = self.__headers
 
@@ -28,7 +30,7 @@ class Database(object):
     def __headers(self):
         return {
             # 'Content-Type': 'application/json',  # requests manages this
-            'Authorization': 'Bearer %s' % self.token,
+            'Authorization': 'Bearer %s' % self.config.trakt['token'],
             'trakt-api-version': '2',
             'trakt-api-key': client_id
         }
@@ -41,9 +43,11 @@ class Database(object):
         rc = self.r.post('https://api.trakt.tv/oauth/device/token', data=data)
         if rc.status_code == 200:
             rc = rc.json()
-            self.token = rc['access_token']
+            self.config.trakt['token'] = rc['access_token']
             # needed for refresh without asking user
-            self.token_refresh = rc['refresh_token']
+            self.config.trakt['token_refresh'] = rc['refresh_token']
+            # self.config['trakt']['token_date'] =
+            self.config.save()
             # rc['created_at']  # timestamp
             # rc['expires_in']  # 7200 = 3 months?
             return True
