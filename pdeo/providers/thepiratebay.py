@@ -33,7 +33,7 @@ class Provider(BaseProvider):
             imdb = i.group(1)  # or None
         return {'imdb': imdb}
 
-    def searchAll(self, title, year, imdb):  # imdb tmdb
+    def searchAll(self, title, year, imdb, min_size):  # imdb tmdb
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: quality, resolution, bitrate
         # TODO: min_size, max_size
@@ -60,7 +60,15 @@ class Provider(BaseProvider):
             details_link = 'https://thepiratebay.org/%s' % tds[1].find('a')['href']  # TODO: get imdb/whatever from here to bump score
             name = tds[1].find('a').string
             magnet = tds[3].find('a')['href']
+
             size = tds[4].string.replace('\xa0', ' ')  # TODO: convert to int # TODO?: fix coding
+            if size[-3:] == 'GiB':
+                size = float(size[:-4])
+            elif size[-3:] == 'MiB':
+                size = float(size[:-4]) / 1024
+            if size < min_size:
+                break  # it's sorted by size so no need to check more.
+
             seeders = tds[5].string  # int? # TODO?: bump score based on this or maybe lower if not enought
             leechers = tds[6].string  # int?
 

@@ -64,9 +64,9 @@ class BaseProvider(object):
         else:
             return self.magnetToTorrent(magnet)
 
-    def search(self, title, year, imdb):
+    def search(self, title, year, imdb, min_size):
         """Search the one and only torrent. Return torrent file."""
-        torrents = self.searchAll(title=title, year=year, imdb=imdb)
+        torrents = self.searchAll(title=title, year=year, imdb=imdb, min_size=min_size)
         if torrents:
             torrent = self.__sort(torrents)[0]
             torrent['torrent'] = self.download(torrent['url'], torrent['magnet'])
