@@ -38,6 +38,11 @@ Installation
 
     computer ~ # pip install pdeo
 
+OR download and invoke installation manually
+
+.. code-block:: bash
+    computer ~ # python setup.py install
+
 
 Usage
 =====
