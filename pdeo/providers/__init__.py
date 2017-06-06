@@ -11,6 +11,8 @@ This module implements the pdeo provider base methods.
 import requests
 import re
 
+from ..config import Config
+
 
 # all provider modules should have:
 #   search()  <-- {torrent_file, magnet}
@@ -33,8 +35,10 @@ headers = {  # TODO?: move to config
 
 class BaseProvider(object):
     def __init__(self, username=None, passwd=None):
+        self.config = Config()
         self.r = requests.Session()
         self.r.headers = headers
+        self.config.save()
 
     # TODO?: __get instead of self.r.get
 

@@ -26,16 +26,22 @@ class Config(object):
             config = {}
         except yaml.YAMLError as e:
             print(e)  # config cannot be loaded
-            raise PdeoError('Config cannot be loaded.')
+            raise PdeoError('Config cannot be loaded, probably broken.')
 
         self.destination = config.get('destination', '.')
         self.min_size = config.get('min_size', 0)
         self.trakt = config.get('trakt', {'token': None,
                                           'token_date': None,
                                           'token_refresh': None})  # config.get('trakt', {}).get('token', None)
+        self.score = config.get('score', {'dead': -50,
+                                          'trusted': 10,
+                                          'vip': 20,
+                                          'moderator': 50,
+                                          'imdb': 50})
 
     def save(self):
         config = {'destination': self.destination,
                   'min_size': self.min_size,
-                  'trakt': self.trakt}
+                  'trakt': self.trakt,
+                  'score': self.score}
         yaml.safe_dump(config, open(self.config_file, 'w'), default_flow_style=False)

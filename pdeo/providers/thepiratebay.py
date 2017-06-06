@@ -69,18 +69,20 @@ class Provider(BaseProvider):
             if size < min_size:
                 break  # it's sorted by size so no need to check more.
 
-            seeders = tds[5].string  # int? # TODO?: bump score based on this or maybe lower if not enought
-            leechers = tds[6].string  # int?
+            seeders = int(tds[5].string)  # TODO?: bump score based on this
+            leechers = int(tds[6].string)
 
             details = self.detailsPage(details_link)  # TODO: do this only if we've got imdb to check
 
             # score  # TODO: move to BaseProvider
             # TODO: score values in config
+            # TODO: refactoring
             score = 0
-            score += (0, 10)[tds[3].find('img', alt=re.compile('Trusted')) is not None]
-            score += (0, 20)[tds[3].find('img', alt=re.compile('VIP')) is not None]
-            score += (0, 50)[tds[3].find('img', alt=re.compile('Moderator')) is not None]
-            score += (0, 50)[details['imdb'] == imdb and imdb is not None]  # TODO: same as details
+            score += (0, self.config.score['dead'])[seeders > 0]
+            score += (0, self.config.score['trusted'])[tds[3].find('img', alt=re.compile('Trusted')) is not None]
+            score += (0, self.config.score['vip'])[tds[3].find('img', alt=re.compile('VIP')) is not None]
+            score += (0, self.config.score['moderator'])[tds[3].find('img', alt=re.compile('Moderator')) is not None]
+            score += (0, self.config.score['imdb'])[details['imdb'] == imdb and imdb is not None]  # TODO: same as details
 
             torrents.append({'name': name,
                              'magnet': magnet,
