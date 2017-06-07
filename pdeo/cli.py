@@ -11,6 +11,7 @@ Usage:
 Options:
     -h, --help                          Show this screen.
     --version                           Show version.
+    --debug                             Enable debug.
     -d DIR, --destination DIR           Destination dir for torrent files. [default: .]
     -q QUALITY, --quality QUALITY       Desired quality rhd/hd/uhd [default: hd] - doesn't work yet  # TODO: resolution and bitrate instead? # TODO: codecs
     --min_size SIZE                     Mininmum size in GiB required. [default: 0]  # TODO: replace with bitrate, attach to quality.  # TODO?: max_size
@@ -32,8 +33,8 @@ from .core import Core
 version_text = '%s v%s' % (__title__, __version__)
 
 
-def run(database, min_size, destination):
-    p = Core(database=database)
+def run(database, min_size, destination, debug):
+    p = Core(database=database, debug=debug)
     p.get(min_size=min_size, destination=destination)
 
 
@@ -46,7 +47,7 @@ def __main__():
         sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
         database = 'trakt'
-    run(database, min_size=int(args['--min_size']), destination=args['--destination'])
+    run(database, min_size=int(args['--min_size']), destination=args['--destination'], debug=args['--debug'])
 
 
 if __name__ == '__main__':

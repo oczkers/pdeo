@@ -16,7 +16,8 @@ from . import BaseProvider
 
 class Provider(BaseProvider):
     def __init__(self, username=None, passwd=None):
-        super().__init__()
+        super().__init__(logger_name=__name__)
+        self.logger.debug('initializing provider - thepirate')
 
     def detailsPage(self, url):  # TODO: language
         """Parse details page. Return {imdb, tmdb}."""

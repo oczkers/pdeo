@@ -9,12 +9,15 @@ This module implements the pdeo basic methods.
 """
 
 
+from .logger import logger
 from .databases import trakt  # TODO: mysql, sqlite
 from .providers import thepiratebay  # TODO?: vpn/proxy
 
 
 class Core(object):
-    def __init__(self, database='trakt'):
+    def __init__(self, database='trakt', debug=False):
+        logger(save=debug)  # init root logger
+        self.logger = logger(__name__)
         if database == 'trakt':
             self.db = trakt.Database()
         else:
@@ -28,6 +31,7 @@ class Core(object):
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
         movies = self.db.load()
+        self.logger.debug('MOVIES: %s' % movies)
         prov = provider.Provider(username=username, passwd=passwd)
         for movie in movies:
             torrent = prov.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], min_size=min_size)
@@ -38,3 +42,5 @@ class Core(object):
             else:
                 print('INFO: torrent not found: %s' % movie['title'])  # DEBUG
                 pass  # torrent not found
+
+# TODO: logger like in fut

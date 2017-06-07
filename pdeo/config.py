@@ -37,7 +37,8 @@ class Config(object):
                                           'trusted': 10,
                                           'vip': 20,
                                           'moderator': 50,
-                                          'imdb': 50})
+                                          'imdb': 50})  # TODO: custom score ('string')
+        # self.save()  # save to add new values, correct structure etc.
 
     def save(self):
         config = {'destination': self.destination,

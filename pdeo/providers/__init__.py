@@ -12,6 +12,7 @@ import requests
 import re
 
 from ..config import Config
+from ..logger import logger
 
 
 # all provider modules should have:
@@ -34,13 +35,17 @@ headers = {  # TODO?: move to config
 
 
 class BaseProvider(object):
-    def __init__(self, username=None, passwd=None):
+    def __init__(self, username=None, passwd=None, logger_name=__name__):  # remove username, passwd?
+        # self.logger = logger(child=True)
+        self.logger = logger(logger_name)
         self.config = Config()
         self.r = requests.Session()
         self.r.headers = headers
         self.config.save()
 
     # TODO?: __get instead of self.r.get
+    # TODO: freelech bumps score (+1) on private trackers
+    # TODO: norar bumps score +1
 
     # search method implemented by specific provider
 
