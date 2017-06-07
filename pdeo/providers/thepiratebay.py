@@ -17,7 +17,6 @@ from . import BaseProvider
 class Provider(BaseProvider):
     def __init__(self, username=None, passwd=None):
         super().__init__(logger_name=__name__)
-        self.logger.debug('initializing provider - thepirate')
 
     def detailsPage(self, url):  # TODO: language
         """Parse details page. Return {imdb, tmdb}."""
@@ -29,26 +28,28 @@ class Provider(BaseProvider):
         # print(rc)
         # imdb_id = re.search('(tt[0-9]{4,7})', str(rc)).group(1)
         rc = self.r.get(url).text
+        self.logger.debug(rc)
         i = re.search('(tt[0-9]{4,7})', rc)
         if i:
             imdb = i.group(1)  # or None
         return {'imdb': imdb}
 
-    def searchAll(self, title, year, imdb, min_size):  # imdb tmdb
+    def searchAll(self, title, year, imdb, quality, min_size):  # imdb tmdb
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: quality, resolution, bitrate
         # TODO: min_size, max_size
         # TODO: exclude string param (for example KORSUB)
         # TODO?: bump score if well known group name found
         # TODO?: drop year or validate on imdb/tmdb first
-        print('Searching: %s %s %s' % (title, year, imdb))
+        print('Searching: %s %s %s %s' % (title, year, quality, imdb))
         # TODO: async
         self.r.cookies.set('lw', 's', domain='thepiratebay.org')  # single view, better for parsing (?)
         category = 207  # hd-movies
         page = 0  # no need to look further
         orderby = 5  # size desc
-        url = 'https://thepiratebay.org/search/%s %s/%s/%s/%s' % (title, year, page, orderby, category)
+        url = 'https://thepiratebay.org/search/%s %s %s/%s/%s/%s' % (title, year, quality, page, orderby, category)
         rc = self.r.get(url).text  # TODO: timeout
+        self.logger.debug(rc)
 
         torrents = []
         bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
@@ -63,7 +64,7 @@ class Provider(BaseProvider):
             magnet = tds[3].find('a')['href']
 
             size = tds[4].string.replace('\xa0', ' ')  # TODO: convert to int # TODO?: fix coding
-            if size[-3:] == 'GiB':
+            if size[-3:] == 'GiB':  # TODO?: move to baseProvider
                 size = float(size[:-4])
             elif size[-3:] == 'MiB':
                 size = float(size[:-4]) / 1024
@@ -79,7 +80,7 @@ class Provider(BaseProvider):
             # TODO: score values in config
             # TODO: refactoring
             score = 0
-            score += (0, self.config.score['dead'])[seeders > 0]
+            score += (0, self.config.score['dead'])[seeders < 0]
             score += (0, self.config.score['trusted'])[tds[3].find('img', alt=re.compile('Trusted')) is not None]
             score += (0, self.config.score['vip'])[tds[3].find('img', alt=re.compile('VIP')) is not None]
             score += (0, self.config.score['moderator'])[tds[3].find('img', alt=re.compile('Moderator')) is not None]

@@ -29,6 +29,7 @@ class Config(object):
             raise PdeoError('Config cannot be loaded, probably broken.')
 
         self.destination = config.get('destination', '.')
+        self.quality = config.get('quality', '1080p')
         self.min_size = config.get('min_size', 0)
         self.trakt = config.get('trakt', {'token': None,
                                           'token_date': None,
@@ -42,6 +43,7 @@ class Config(object):
 
     def save(self):
         config = {'destination': self.destination,
+                  'quality': self.quality,
                   'min_size': self.min_size,
                   'trakt': self.trakt,
                   'score': self.score}

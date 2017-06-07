@@ -56,6 +56,7 @@ class BaseProvider(object):
             return (torrents['score'],
                     torrents['size'],
                     torrents['seeders'] + torrents['leechers'])
+        print(sorted(torrents, key=key, reverse=True))  # DEBUG
         return sorted(torrents, key=key, reverse=True)
 
     def magnetToTorrent(self, magnet):
@@ -73,9 +74,9 @@ class BaseProvider(object):
         else:
             return self.magnetToTorrent(magnet)
 
-    def search(self, title, year, imdb, min_size):
+    def search(self, title, year, imdb, quality, min_size):
         """Search the one and only torrent. Return torrent file."""
-        torrents = self.searchAll(title=title, year=year, imdb=imdb, min_size=min_size)
+        torrents = self.searchAll(title=title, year=year, imdb=imdb, quality=quality, min_size=min_size)
         if torrents:
             torrent = self.__sort(torrents)[0]
             torrent['torrent'] = self.download(torrent['url'], torrent['magnet'])
