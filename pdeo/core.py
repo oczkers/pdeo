@@ -11,7 +11,8 @@ This module implements the pdeo basic methods.
 
 from .logger import logger
 from .databases import trakt  # TODO: mysql, sqlite
-from .providers import thepiratebay  # TODO?: vpn/proxy
+from .providers import thepiratebay, polishsource  # TODO?: vpn/proxy
+from .exceptions import PdeoError
 
 
 class Core(object):
@@ -23,13 +24,20 @@ class Core(object):
         else:
             raise NotImplementedError('Only trakt works for now.')
 
-    def get(self, provider=thepiratebay, username=None, passwd=None, destination='.', quality='1080p', min_size=0):
+    def get(self, provider='thepiratebay', username=None, passwd=None, destination='.', quality='1080p', min_size=0):
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
         # TODO?: initializate provider before calling this?
         # TODO: quality, resoltion & bitrate
         # TODO?: proper convert magnet to torrent file
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
+        if provider == 'thepiratebay':
+            provider = thepiratebay
+        elif provider == 'polishsource':
+            provider = polishsource
+        else:
+            raise PdeoError('Unknown provider.')
+
         movies = self.db.load()
         self.logger.debug('MOVIES: %s' % movies)
         prov = provider.Provider(username=username, passwd=passwd)
@@ -42,5 +50,6 @@ class Core(object):
             else:
                 print('INFO: torrent not found: %s' % movie['title'])  # DEBUG
                 pass  # torrent not found
+            input('next?')  # DEBUG
 
 # TODO: logger like in fut

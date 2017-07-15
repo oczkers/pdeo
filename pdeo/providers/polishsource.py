@@ -10,6 +10,7 @@ This module implements the pdeo polishsource.cz provider methods.
 
 import os
 import requests
+from bs4 import BeautifulSoup
 
 from . import BaseProvider
 from ..exceptions import PdeoError
@@ -49,4 +50,41 @@ class Provider(BaseProvider):
     def searchAll(self, title, year, imdb, quality, min_size):  # imdb tmdb
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: async
-        pass
+        params = {'c11': 1,  # category: movies/hd
+                  'search': '%s %s' % (title, year),
+                  'incldead': 1,
+                  'scene': 0,
+                  'pl': 0,
+                  'sub': '',
+                  'search_in': 'both'}  # title only?
+        rc = self.r.get('https://polishsource.cz/browse.php', params=params).text
+        open('pdeo.log', 'w').write(rc)
+
+        torrents = []
+        bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
+        table = bs.find('table', attrs={'id': 'restable'})
+        if not table:
+            return torrents
+        entries = table.findAll('tr')  # broken tags, trs are not closed...
+        for i in entries[1:]:
+            tds = i.findAll('td')
+            name = tds[1].find('b')  # there are many b
+            magnet = None
+            size = tds[4].string  # parse
+            seeders = tds[6].string
+            leechers = tds[7].string
+            imdb_id = tds[1].find('a', title='Rate IMDB').href  # parse to get only id
+
+            score = 0
+            score += (0, self.config.score['dead'])[seeders < 0]
+            score += (0, self.config.score['imdb'])[imdb_id == imdb and imdb is not None]  # TODO: same as details
+
+            torrents.append({'name': name,
+                             'magnet': magnet,
+                             'size': size,
+                             'seeders': seeders,
+                             'leechers': leechers,
+                             'score': score,
+                             'imdb': imdb_id,
+                             'url': None})  # TODO: scheme in BaseProvider
+        return torrents

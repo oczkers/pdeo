@@ -11,11 +11,12 @@ Usage:
 Options:
     -h, --help                          Show this screen.
     --version                           Show version.
-    --debug                             Enable debug.
+    --debug                             Enable debug.  # TODO: enable debug automatically if not daemon
     -d DIR, --destination DIR           Destination dir for torrent files. [default: .]
     -q QUALITY, --quality QUALITY       Desired quality 720p/1080p/4k [default: 1080p]  # 4k might result in many fallpositives # TODO: resolution and bitrate instead? # TODO: codecs
     --min_size SIZE                     Mininmum size in GiB required. [default: 0]  # TODO: replace with bitrate, attach to quality.  # TODO?: max_size
     --strict                            Strict search, don't download if uncertain.  # TODO: implement this or somekind of score
+    -p PROVIDER, --provider PROVIDER    Choose provider. [default: thepiratebay]
 
 Trakt options:
 
@@ -33,9 +34,9 @@ from .core import Core
 version_text = '%s v%s' % (__title__, __version__)
 
 
-def run(database, destination, quality, min_size, debug):
+def run(provider, database, destination, quality, min_size, debug):
     p = Core(database=database, debug=debug)
-    p.get(destination=destination, quality=quality, min_size=min_size)
+    p.get(provider=provider, destination=destination, quality=quality, min_size=min_size)
 
 
 def __main__():
@@ -47,7 +48,7 @@ def __main__():
         sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
         database = 'trakt'
-    run(database, destination=args['--destination'], quality=args['--quality'], min_size=int(args['--min_size']), debug=args['--debug'])
+    run(provider=args['--provider'], database=database, destination=args['--destination'], quality=args['--quality'], min_size=int(args['--min_size']), debug=args['--debug'])
 
 
 if __name__ == '__main__':
