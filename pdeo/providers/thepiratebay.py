@@ -80,7 +80,7 @@ class Provider(BaseProvider):
             # TODO: score values in config
             # TODO: refactoring
             score = 0
-            score += (0, self.config.score['dead'])[seeders < 0]
+            score += (0, self.config.score['dead'])[seeders == 0]
             score += (0, self.config.score['trusted'])[tds[3].find('img', alt=re.compile('Trusted')) is not None]
             score += (0, self.config.score['vip'])[tds[3].find('img', alt=re.compile('VIP')) is not None]
             score += (0, self.config.score['moderator'])[tds[3].find('img', alt=re.compile('Moderator')) is not None]
