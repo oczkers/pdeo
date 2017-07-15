@@ -71,21 +71,25 @@ class Provider(BaseProvider):
         # entries = table.findAll('tr')  # broken tags, trs are not closed...
         # for i in entries[1:]:
         for i in rc.split('currentpage')[1].split('<tr')[2:]:
+            imdb_id = None
             i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
             name = tds[1].find('b').string
             if quality not in name:
                 continue
-            id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)
+            # id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)
+            id = re.search('id=([0-9]+)', str(tds[1])).group(1)
             size = tds[4].text  # parse
             if size[-2:] == 'GB':
                 size = float(size[:-2])
             # TODO: MB
-            print(tds[5].findAll('a'))
+            if size < min_size:
+                continue
             # url = 'https://polishsource.cz/' + tds[5].findAll('a')[1]['href']
             seeders = int(tds[6].string)
             leechers = int(tds[7].string)
-            imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href']).group(1)
+            if 'Rate IMDB' in tds[1]:  # TODO: optimize
+                imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href']).group(1)
             url = 'https://polishsource.cz/downloadssl.php?id=%s&torr=%s' % (id, name + '.torrent')
 
             score = 0
