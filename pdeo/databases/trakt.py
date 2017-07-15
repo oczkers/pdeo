@@ -73,20 +73,27 @@ class Database(object):
         # token is valid for 3 months
         self.__getToken(self.token_refresh)  # TODO?: raise error if false
 
+    def loadCollection(self, category='movies'):
+        """Loads collection, returns list of movies."""
+        rc = self.r.get('https://api.trakt.tv/sync/collection/%s' % category).json()
+        return [m[category[:-1]] for m in rc]
+
     def load(self, category='movies'):
         """Loads watchlist."""
         # http://docs.trakt.apiary.io/#reference/sync/get-watchlist
+        collection = self.loadCollection(category)
         movies = []
         rc = self.r.get('https://api.trakt.tv/sync/watchlist/%s' % category).json()
         for m in rc:
-            movies.append({
-                'date': m['listed_at'],  # TODO: datetime
-                'category': m['type'],
-                'title': m[m['type']]['title'],
-                'year': m[m['type']]['year'],
-                'tmdb': m[m['type']]['ids'].get('tmdb'),
-                'imdb': m[m['type']]['ids'].get('imdb'),
-            })
+            if m[m['type']] not in collection:
+                movies.append({
+                    'date': m['listed_at'],  # TODO: datetime
+                    'category': m['type'],
+                    'title': m[m['type']]['title'],
+                    'year': m[m['type']]['year'],
+                    'tmdb': m[m['type']]['ids'].get('tmdb'),
+                    'imdb': m[m['type']]['ids'].get('imdb'),
+                })
         return movies
 
     # TODO: def add
