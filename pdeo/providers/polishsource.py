@@ -9,6 +9,7 @@ This module implements the pdeo polishsource.cz provider methods.
 """
 
 import os
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -61,30 +62,38 @@ class Provider(BaseProvider):
         open('pdeo.log', 'w').write(rc)
 
         torrents = []
-        bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
-        table = bs.find('table', attrs={'id': 'restable'})
-        if not table:
-            return torrents
-        entries = table.findAll('tr')  # broken tags, trs are not closed...
-        for i in entries[1:]:
+        # bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
+        # table = bs.find('table', attrs={'id': 'restable'})
+        # if not table:
+        #     return torrents
+        # entries = table.findAll('tr')  # broken tags, trs are not closed...
+        # for i in entries[1:]:
+        for i in rc.split('currentpage')[1].split('<tr')[2:]:
+            i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
-            name = tds[1].find('b')  # there are many b
-            magnet = None
-            size = tds[4].string  # parse
-            seeders = tds[6].string
-            leechers = tds[7].string
-            imdb_id = tds[1].find('a', title='Rate IMDB').href  # parse to get only id
+            name = tds[1].find('b').string  # there are many b
+            id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)
+            size = tds[4].text  # parse
+            if size[-2:] == 'GB':
+                size = float(size[:-2])
+            # TODO: MB
+            print(tds[5].findAll('a'))
+            # url = 'https://polishsource.cz/' + tds[5].findAll('a')[1]['href']
+            seeders = int(tds[6].string)
+            leechers = int(tds[7].string)
+            imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href']).group(1)
+            url = 'https://polishsource.cz/downloadssl.php?id=%s&torr=%s' % (id, name + '.torrent')
 
             score = 0
-            score += (0, self.config.score['dead'])[seeders < 0]
+            score += (0, self.config.score['dead'])[seeders == 0]
             score += (0, self.config.score['imdb'])[imdb_id == imdb and imdb is not None]  # TODO: same as details
 
             torrents.append({'name': name,
-                             'magnet': magnet,
+                             'magnet': None,
                              'size': size,
                              'seeders': seeders,
                              'leechers': leechers,
                              'score': score,
                              'imdb': imdb_id,
-                             'url': None})  # TODO: scheme in BaseProvider
+                             'url': url})  # TODO: scheme in BaseProvider
         return torrents
