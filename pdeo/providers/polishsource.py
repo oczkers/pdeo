@@ -52,7 +52,7 @@ class Provider(BaseProvider):
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: async
         params = {'c11': 1,  # category: movies/hd
-                  'search': '%s %s' % (title, year),
+                  'search': '%s %s %s' % (title, year, quality),
                   'incldead': 1,
                   'scene': 0,
                   'pl': 0,
