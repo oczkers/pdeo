@@ -41,8 +41,8 @@ class Provider(BaseProvider):
         # TODO: exclude string param (for example KORSUB)
         # TODO?: bump score if well known group name found
         # TODO?: drop year or validate on imdb/tmdb first
-        print('Searching: %s %s %s %s' % (title, year, quality, imdb))
         # TODO: async
+        torrents = []
         self.r.cookies.set('lw', 's', domain='thepiratebay.org')  # single view, better for parsing (?)
         category = 207  # hd-movies
         page = 0  # no need to look further
@@ -51,7 +51,6 @@ class Provider(BaseProvider):
         rc = self.r.get(url).text  # TODO: timeout
         self.logger.debug(rc)
 
-        torrents = []
         bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
         table = bs.find('table', attrs={'id': 'searchResult'})
         if not table:  # TODO: refactorization

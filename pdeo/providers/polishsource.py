@@ -51,6 +51,7 @@ class Provider(BaseProvider):
     def searchAll(self, title, year, imdb, quality, min_size):  # imdb tmdb
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: async
+        torrents = []
         params = {'c11': 1,  # category: movies/hd
                   'search': '%s %s %s' % (title, year, quality),
                   'incldead': 1,
@@ -60,8 +61,9 @@ class Provider(BaseProvider):
                   'search_in': 'both'}  # title only?
         rc = self.r.get('https://polishsource.cz/browse.php', params=params).text
         open('pdeo.log', 'w').write(rc)
+        if 'Nic nie znaleziono!' in rc:
+            return []
 
-        torrents = []
         # bs = BeautifulSoup(rc, 'html.parser')  # <3? # TODO: lxml if available
         # table = bs.find('table', attrs={'id': 'restable'})
         # if not table:
@@ -71,7 +73,9 @@ class Provider(BaseProvider):
         for i in rc.split('currentpage')[1].split('<tr')[2:]:
             i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
-            name = tds[1].find('b').string  # there are many b
+            name = tds[1].find('b').string
+            if quality not in name:
+                continue
             id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)
             size = tds[4].text  # parse
             if size[-2:] == 'GB':
@@ -86,6 +90,7 @@ class Provider(BaseProvider):
 
             score = 0
             score += (0, self.config.score['dead'])[seeders == 0]
+            score += seeders  # 50 seeders == imdb, it it good idea?
             score += (0, self.config.score['imdb'])[imdb_id == imdb and imdb is not None]  # TODO: same as details
 
             torrents.append({'name': name,
