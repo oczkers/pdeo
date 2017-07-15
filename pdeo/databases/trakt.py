@@ -66,7 +66,7 @@ class Database(object):
         # TODO: automatically open browser link
         print('1. Go to the following link: %s' % rc['verification_url'])
         print('2. Enter user code: %s' % rc['user_code'])
-        input('done?')  # TODO: async? check instead of asking user
+        input('done?')  # TODO: async? check instead of asking user  # TODO: daemon mode without any interupt (error instead)
         self.__getToken(rc['device_code'])  # TODO?: raise error if false
 
     def __tokenRefresh(self):  # shouldn't this be private?
