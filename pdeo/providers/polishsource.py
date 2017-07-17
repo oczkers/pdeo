@@ -27,6 +27,8 @@ class Provider(BaseProvider):
         if self.config.polishsource['cookies']:
             self.r.cookies = requests.cookies.cookiejar_from_dict(self.config.polishsource['cookies'])
             rc = self.r.get('https://polishsource.cz').text
+        elif not username or passwd:
+            raise PdeoError('Username & password or cookies is required for this provider.')  # TODO: PdeoError -> ProviderError
         else:  # TODO: _login
             print('no cookies')
             rc = self.r.get('https://polishsource.cz/login.php').text

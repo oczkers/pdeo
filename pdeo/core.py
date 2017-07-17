@@ -17,19 +17,27 @@ from .exceptions import PdeoError
 
 
 class Core(object):
-    def __init__(self, database='trakt', provider=None, debug=False):
+    def __init__(self, database=None, provider=None, debug=False):
         self.config = Config()  # TODO: config_file
-        if not provider:
-            provider = self.config.provider
-        self.provider = provider
+        if database:
+            self.config.database = database
+        self.db = self._database(self.config.database)
+        if provider:
+            self.config.provider = provider
+        self.provider = self._provider(self.config.provider)
+
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
+
+    def _database(self, database):
+        """Convert database name to database class."""
         if database == 'trakt':
-            self.db = trakt.Database()
+            database = trakt
         else:
             raise NotImplementedError('Only trakt works for now.')
+        return database.Database()
 
-    def _provider(self, provider):
+    def _provider(self, provider, username=None, passwd=None):
         """Convert provider name to provider class."""
         if not provider:
             provider = self.provider
@@ -39,22 +47,20 @@ class Core(object):
             provider = polishsource
         else:
             raise PdeoError('Unknown provider.')
-        return provider
+        return provider.Provider(username=username, passwd=passwd)
 
-    def get(self, provider=None, username=None, passwd=None, destination='.', quality='1080p', min_size=0):
+    def get(self, destination='.', quality='1080p', min_size=0):
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
+        # TODO: ability to use other/few providers
         # TODO?: initializate provider before calling this?
         # TODO: quality, resoltion & bitrate
         # TODO?: proper convert magnet to torrent file
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
-        provider = self._provider(provider)
-
         movies = self.db.load()
         self.logger.debug('MOVIES: %s' % movies)
-        prov = provider.Provider(username=username, passwd=passwd)
         for movie in movies:
-            torrent = prov.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
+            torrent = self.provider.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
             if torrent:  # TODO: i don't like this if
                 filepath = '%s/%s.torrent' % (destination, torrent['name'])
                 open(filepath, 'wb').write(torrent['torrent'])  # with?

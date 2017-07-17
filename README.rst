@@ -48,7 +48,6 @@ OR download and invoke installation manually
 Usage
 =====
 
-To be done.
 Look at pdeo/cli.py for more info.
 
 .. code-block:: bash
@@ -66,6 +65,8 @@ List of providers
 -----------------
 
 - thepiratebay
+- polishsource (private tracker)
+- torrentday (private tracker) - not yet implemented
 
 
 Development
