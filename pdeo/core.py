@@ -10,13 +10,18 @@ This module implements the pdeo basic methods.
 
 
 from .logger import logger
+from .config import Config
 from .databases import trakt  # TODO: mysql, sqlite
 from .providers import thepiratebay, polishsource  # TODO?: vpn/proxy
 from .exceptions import PdeoError
 
 
 class Core(object):
-    def __init__(self, database='trakt', debug=False):
+    def __init__(self, database='trakt', provider=None, debug=False):
+        self.config = Config()  # TODO: config_file
+        if not provider:
+            provider = self.config.provider
+        self.provider = provider
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         if database == 'trakt':
@@ -24,19 +29,27 @@ class Core(object):
         else:
             raise NotImplementedError('Only trakt works for now.')
 
-    def get(self, provider='thepiratebay', username=None, passwd=None, destination='.', quality='1080p', min_size=0):
-        """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
-        # TODO?: initializate provider before calling this?
-        # TODO: quality, resoltion & bitrate
-        # TODO?: proper convert magnet to torrent file
-        # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
-        # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
+    @property
+    def _provider(self, provider):
+        """Convert provider name to provider class."""
+        if not provider:
+            provider = self.provider
         if provider == 'thepiratebay':
             provider = thepiratebay
         elif provider == 'polishsource':
             provider = polishsource
         else:
             raise PdeoError('Unknown provider.')
+        return provider
+
+    def get(self, provider=None, username=None, passwd=None, destination='.', quality='1080p', min_size=0):
+        """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
+        # TODO?: initializate provider before calling this?
+        # TODO: quality, resoltion & bitrate
+        # TODO?: proper convert magnet to torrent file
+        # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
+        # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
+        provider = self._provider
 
         movies = self.db.load()
         self.logger.debug('MOVIES: %s' % movies)

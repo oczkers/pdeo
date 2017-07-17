@@ -15,6 +15,7 @@ from .exceptions import PdeoError
 
 class Config(object):
     def __init__(self, config_file='pdeo.yml'):  # default filename
+        # TODO: config in home
         self.config_file = config_file
         self._load()
 
@@ -39,6 +40,7 @@ class Config(object):
         self.trakt = config.get('trakt', {'token': None,
                                           'token_date': None,
                                           'token_refresh': None})  # config.get('trakt', {}).get('token', None)
+        self.provider = config.get('provider', 'thepiratebay')
         self.polishsource = config.get('polishsource', {'cookies': None})
         # self.save()  # save to add new values, correct structure etc.
 
@@ -49,5 +51,6 @@ class Config(object):
                   'min_size': self.min_size,
                   'score': self.score,
                   'trakt': self.trakt,
+                  'provider': self.provider,
                   'polishsource': self.polishsource}
         yaml.safe_dump(config, open(self.config_file, 'w'), default_flow_style=False)
