@@ -96,4 +96,9 @@ class Database(object):
                 })
         return movies
 
+    def clean(self, category='movies'):
+        """Remove collected items from watchlist."""
+        # TODO: impleent
+        pass
+
     # TODO: def add

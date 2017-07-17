@@ -53,6 +53,6 @@ class Config(object):
                   'score': self.score,
                   'trakt': self.trakt,
                   'provider': self.provider,
-                  'database': self.datbase,
+                  'database': self.database,
                   'polishsource': self.polishsource}
         yaml.safe_dump(config, open(self.config_file, 'w'), default_flow_style=False)
