@@ -29,7 +29,6 @@ class Core(object):
         else:
             raise NotImplementedError('Only trakt works for now.')
 
-    @property
     def _provider(self, provider):
         """Convert provider name to provider class."""
         if not provider:
@@ -49,7 +48,7 @@ class Core(object):
         # TODO?: proper convert magnet to torrent file
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
-        provider = self._provider
+        provider = self._provider(provider)
 
         movies = self.db.load()
         self.logger.debug('MOVIES: %s' % movies)

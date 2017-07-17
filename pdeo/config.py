@@ -31,7 +31,7 @@ class Config(object):
 
         self.destination = config.get('destination', '.')
         self.quality = config.get('quality', '1080p')
-        self.min_size = config.get('min_size', 0)
+        self.min_size = config.get('min_size', 5)
         self.score = config.get('score', {'dead': -50,
                                           'trusted': 10,
                                           'vip': 20,
