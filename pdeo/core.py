@@ -61,7 +61,7 @@ class Core(object):
         self.logger.debug('MOVIES: %s' % movies)
         for movie in movies:
             torrent = self.provider.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
-            if torrent:  # TODO: i don't like this if
+            if torrent and torrent['score'] > 0:  # TODO: i don't like this if
                 filepath = '%s/%s.torrent' % (destination, torrent['name'])
                 open(filepath, 'wb').write(torrent['torrent'])  # with?
                 print('INFO: torrent downloaded (%s).' % torrent['name'])
