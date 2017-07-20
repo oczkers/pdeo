@@ -9,14 +9,17 @@ This module implements the pdeo config methods.
 """
 
 import yaml
+from os.path import expanduser
 
 from .exceptions import PdeoError
 
 
 class Config(object):
-    def __init__(self, config_file='pdeo.yml'):  # default filename
+    def __init__(self, filename='pdeo.yml', path=None):  # default filename
         # TODO: config in home
-        self.config_file = config_file
+        if not path:
+            path = expanduser('~/.config/')
+        self.config_file = path + filename
         self._load()
 
     def _load(self):
