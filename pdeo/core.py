@@ -57,7 +57,7 @@ class Core(object):
         # TODO?: proper convert magnet to torrent file
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
-        movies = self.db.load()
+        movies = self.db.load(category='movies')
         self.logger.debug('MOVIES: %s' % movies)
         for movie in movies:
             torrent = self.provider.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
@@ -69,5 +69,7 @@ class Core(object):
                 print('INFO: torrent not found: %s' % movie['title'])  # DEBUG
                 pass  # torrent not found
             input('next?')  # DEBUG
+        # tvshows = self.db.load(category='')
+
 
 # TODO: logger like in fut
