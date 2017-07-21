@@ -88,8 +88,6 @@ class Database(object):
 
     def loadCollection(self, category='movies'):
         """Loads collection, returns list of movies."""
-        self.loadShows()
-        adadsdas
         rc = self.r.get('https://api.trakt.tv/sync/collection/%s' % category).json()
         return [m[category[:-1]] for m in rc]  # TODO?: parse data (could be usefull to unify with tvshows)
 

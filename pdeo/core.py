@@ -71,5 +71,4 @@ class Core(object):
             input('next?')  # DEBUG
         # tvshows = self.db.load(category='')
 
-
 # TODO: logger like in fut
