@@ -60,6 +60,11 @@ Daemon
 
 simple cronjob?
 
+Drop show
+---------
+
+Simply hide show/season in trakt and we won't track it anymore.
+
 
 List of providers
 -----------------
