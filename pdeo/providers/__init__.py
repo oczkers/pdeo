@@ -57,6 +57,7 @@ class BaseProvider(object):
                     torrents['size'],
                     torrents['seeders'] + torrents['leechers'])
         s = sorted(torrents, key=key, reverse=True)
+        # s = sorted(torrents, key=lambda k: (k['score'], k['size']), reverse=True)
         print(s)  # DEBUG
         return s
 
@@ -75,10 +76,11 @@ class BaseProvider(object):
         else:
             return self.magnetToTorrent(magnet)
 
-    def search(self, title, year, imdb, quality, min_size):
+    def search(self, title, season=None, episode=None, year=None, imdb=None, quality=None, min_size=None):
         """Search the one and only torrent. Return torrent file."""
+        # TODO?: search(movies=None, shows=None)  movies and shows should be objects/specific dicts
         # TODO?: remove ' and other special signs before searching
-        torrents = self.searchAll(title=title, year=year, imdb=imdb, quality=quality, min_size=min_size)
+        torrents = self.searchAll(title=title, season=season, episode=episode, year=year, imdb=imdb, quality=quality, min_size=min_size)
         if torrents:
             torrent = self.__sort(torrents)[0]
             torrent['torrent'] = self.download(torrent['url'], torrent['magnet'])

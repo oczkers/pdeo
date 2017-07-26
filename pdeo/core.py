@@ -71,12 +71,21 @@ class Core(object):
             # input('next?')  # DEBUG
         # tvshows = self.db.load(category='')
 
-    # def getShows(self, destination='.', quality='1080p', min_size=0):
-    #     # TODO: merge into get
-    #     shows = self.db.loadShows()
-    #     for show in shows:
-    #         for season in shows['seasons']:
-    #             for episode in season['episodes']:
-    #                 torrent = self.provider.search(
+    def getShows(self, destination='.', quality='1080p', min_size=0):
+        # TODO: merge into get
+        # TODO: optimize somehow to not check every episode
+        shows = self.db.loadShows()
+        for show in shows.values():
+            print(show)
+            for episode in show:
+                torrent = self.provider.search(title=episode['title'], season=episode['season'], episode=episode['episode'], quality=quality, min_size=min_size)
+                if torrent and torrent['score'] > 0:
+                    filepath = f'{destination}/{torrent["name"]}.torrent'
+                    open(filepath, 'wb').write(torrent['torrent'])  # with?
+                    print(f'INFO: torrent downloaded ({torrent["name"]}).')
+                else:
+                    print(f'INFO: torrent not found: {episode["title"]}')  # DEBUG
+                    pass  # torrent not found
+                input('next?')  # DEBUG
 
 # TODO: logger like in fut

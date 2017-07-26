@@ -116,23 +116,26 @@ class Database(object):
         shows = {}
         rc = self.r.get('https://api.trakt.tv/sync/collection/shows').json()
         for show in rc:
-            data = {'title': show['show']['title'],
-                    'year': show['show']['year'],
-                    'trakt': show['show']['ids']['trakt'],  # trakt id
-                    'slug': show['show']['ids']['slug'],
-                    'tvdb': show['show']['ids']['tvdb'],
-                    'imdb': show['show']['ids']['imdb'],
-                    'tmdb': show['show']['ids']['tmdb'],
-                    'tvrage': show['show']['ids']['tvrage'],
-                    'seasons': {}}
+            episodes = []
             for season in show['seasons']:
-                data['seasons'][season['number']] = {}
-                data['seasons'][season['number']]['episodes'] = [episode['number'] for episode in season['episodes']]
-            shows[data['title']] = data
+                for episode in season['episodes']:
+                    data = {'title': show['show']['title'],
+                            'year': show['show']['year'],
+                            'trakt': show['show']['ids']['trakt'],  # trakt id
+                            'slug': show['show']['ids']['slug'],
+                            'tvdb': show['show']['ids']['tvdb'],
+                            'imdb': show['show']['ids']['imdb'],
+                            'tmdb': show['show']['ids']['tmdb'],
+                            'tvrage': show['show']['ids']['tvrage'],
+                            'season': season['number'],
+                            'episode': episode['number']}
+                    episodes.append(data)
+            shows[data['title']] = episodes
         return shows
 
     def loadShows(self):
         """Loads all aired & not watched & not in collection episodes."""
+        # !!TODO!!: Refactor dict - every episode has it's own record instead of sub-sub-record
         # TODO: ability to return not aired too (leaks).
         # TODO: drop seasons, use only episodes {title, id, episodes[]}
         collection = self.loadCollectionShows()
@@ -141,24 +144,26 @@ class Database(object):
         shows = {}
         rc = self.r.get('https://api.trakt.tv/sync/watched/shows').json()
         for show in rc:
+            episodes = []
             if show['show']['title'] in hidden:
                 continue
-            data = {'title': show['show']['title'],
-                    'year': show['show']['year'],
-                    'trakt': show['show']['ids']['trakt'],  # trakt id
-                    'slug': show['show']['ids']['slug'],
-                    'tvdb': show['show']['ids']['tvdb'],
-                    'imdb': show['show']['ids']['imdb'],
-                    'tmdb': show['show']['ids']['tmdb'],
-                    'tvrage': show['show']['ids']['tvrage'],
-                    'seasons': {}}
-            rc2 = self.r.get(f'https://api.trakt.tv/shows/{data["slug"]}/progress/watched').json()  # use trakt instead of slug
+            rc2 = self.r.get(f'https://api.trakt.tv/shows/{show["show"]["ids"]["slug"]}/progress/watched').json()  # use trakt instead of slug
             for season in rc2['seasons']:
-                data['seasons'][season['number']] = {'episodes': []}
                 for episode in season['episodes']:
-                    if not episode['completed'] and (data['title'] not in collection or season['number'] not in collection[data['title']]['seasons'] or episode['number'] not in collection[data['title']]['seasons'][season['number']]['episodes']):  # TODO: it might be little bit shorter :-) get('', {})?
-                        data['seasons'][season['number']]['episodes'].append(episode['number'])
-            shows[data['title']] = data
+                    data = {'title': show['show']['title'],
+                            'year': show['show']['year'],
+                            'trakt': show['show']['ids']['trakt'],  # trakt id
+                            'slug': show['show']['ids']['slug'],
+                            'tvdb': show['show']['ids']['tvdb'],
+                            'imdb': show['show']['ids']['imdb'],
+                            'tmdb': show['show']['ids']['tmdb'],
+                            'tvrage': show['show']['ids']['tvrage'],
+                            'season': season['number'],
+                            'episode': episode['number']}
+                    if not episode['completed'] and data not in collection.get(data['title'], ()):
+                        episodes.append(data)
+            if len(episodes) > 0:
+                shows[data['title']] = episodes
         return shows
 
     def clean(self, category='movies'):

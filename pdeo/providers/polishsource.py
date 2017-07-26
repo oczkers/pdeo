@@ -50,12 +50,19 @@ class Provider(BaseProvider):
             # return False
             raise PdeoError('Unknown error when logging to polishsource.cz, please report with logs.')
 
-    def searchAll(self, title, year, imdb, quality, min_size):  # imdb tmdb
+    def searchAll(self, title, season=None, episode=None, year=None, imdb=None, quality=None, min_size=None):  # imdb tmdb
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: async
+        # TODO?: replace min_size with min_bitrate (calucate size/time)
+        if season and episode:  # TODO: ability to download whole season (episode=None)
+            cat = 'cat39'
+            search = f'{title} s{season:02d}e{episode:02d} {year or ""} {quality or ""}'
+        else:
+            search = f'{title} {year or ""} {quality or ""}'
+            cat = 'c11'
         torrents = []
-        params = {'c11': 1,  # category: movies/hd
-                  'search': '%s %s %s' % (title, year, quality),
+        params = {cat: 1,  # movies/hd cat11  | tv/hd cat39
+                  'search': search,
                   'incldead': 1,
                   'scene': 0,
                   'pl': 0,
@@ -77,15 +84,16 @@ class Provider(BaseProvider):
             i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
             name = tds[1].find('b').string
-            if quality not in name:
+            if quality and quality not in name:
                 continue
             # id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)
             id = re.search('id=([0-9]+)', str(tds[1])).group(1)
             size = tds[4].text  # parse
             if size[-2:] == 'GB':
                 size = float(size[:-2])
-            # TODO: MB
-            if size < min_size:
+            elif size[-2:] == 'MB':
+                size = float(size[:-2]) / 1024
+            if min_size and size < min_size:
                 continue
             # url = 'https://polishsource.cz/' + tds[5].findAll('a')[1]['href']
             seeders = int(tds[6].string)
@@ -97,7 +105,8 @@ class Provider(BaseProvider):
             score = 0
             score += (0, self.config.score['dead'])[seeders == 0]
             score += seeders  # 50 seeders == imdb, it it good idea?
-            score += (0, self.config.score['imdb'])[imdb_id == imdb and imdb is not None]  # TODO: same as details
+            if imdb:
+                score += (0, self.config.score['imdb'])[imdb_id == imdb]  # TODO: same as details
 
             torrents.append({'name': name,
                              'magnet': None,
