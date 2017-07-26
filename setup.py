@@ -15,9 +15,9 @@ __copyright__ = 'Copyright 2017 Piotr Staroszczyk'
 
 packages = [
     __title__,
-    '%s.databases' % __title__,
-    '%s.providers' % __title__,
-    # '%s.modules' % __title__,
+    f'{__title__}.databases',
+    f'{__title__}.providers',
+    # f'{__title__}.modules',
 ]
 
 with open('requirements.txt') as f:
@@ -30,15 +30,15 @@ with open('README.rst') as f1:
 setup(
     name=__title__,
     version=__version__,
-    description='%s is a very simple alternative for radarr/couchpotato - automatically downloading movies from torrent.' % __title__,
+    description=f'{__title__} is a very simple alternative for radarr/couchpotato - automatically downloading movies from torrent.',
     long_description=long_desc,
     author=__author__,
     author_email=__author_email__,
-    url='https://github.com/oczkers/%s' % __title__,
-    download_url='https://github.com/oczkers/%s/releases' % __title__,
-    bugtrack_url='https://github.com/oczkers/%s/issues' % __title__,
+    url=f'https://github.com/oczkers/{__title__}',
+    download_url=f'https://github.com/oczkers/{__title__}/releases',
+    bugtrack_url=f'https://github.com/oczkers/{__title__}/issues',
     platforms='any',
-    keywords='%s download torrent movies' % __title__,
+    keywords=f'{__title__} download torrent movies',
     packages=packages,
     package_data={'': ['LICENSE']},
     package_dir={__title__: __title__},

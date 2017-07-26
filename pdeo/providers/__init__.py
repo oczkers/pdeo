@@ -56,14 +56,15 @@ class BaseProvider(object):
             return (torrents['score'],
                     torrents['size'],
                     torrents['seeders'] + torrents['leechers'])
-        print(sorted(torrents, key=key, reverse=True))  # DEBUG
-        return sorted(torrents, key=key, reverse=True)
+        s = sorted(torrents, key=key, reverse=True)
+        print(s)  # DEBUG
+        return s
 
     def magnetToTorrent(self, magnet):
         """'Converts' magnet to torrent file. This method probably won't work with private trackers."""
         # TODO: validate
         hash = re.search('urn:btih:(.+?)&', magnet).group(1)
-        torrent_file = self.r.get('https://itorrents.org/torrent/%s.torrent' % hash).content  # TODO?: don't use the same session
+        torrent_file = self.r.get(f'https://itorrents.org/torrent/{hash}.torrent').content  # TODO?: don't use the same session
         return torrent_file
 
     def download(self, url=None, magnet=None):
@@ -76,6 +77,7 @@ class BaseProvider(object):
 
     def search(self, title, year, imdb, quality, min_size):
         """Search the one and only torrent. Return torrent file."""
+        # TODO?: remove ' and other special signs before searching
         torrents = self.searchAll(title=title, year=year, imdb=imdb, quality=quality, min_size=min_size)
         if torrents:
             torrent = self.__sort(torrents)[0]

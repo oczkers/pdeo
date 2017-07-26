@@ -43,7 +43,7 @@ class Database(object):
     def __headers(self):
         return {
             # 'Content-Type': 'application/json',  # requests manages this
-            'Authorization': 'Bearer %s' % self.config.trakt['token'],
+            'Authorization': f'Bearer {self.config.trakt["token"]}',
             'trakt-api-version': '2',
             'trakt-api-key': client_id
         }
@@ -77,8 +77,8 @@ class Database(object):
         data = {'client_id': client_id}
         rc = self.r.post('https://api.trakt.tv/oauth/device/code', data=data).json()
         # TODO: automatically open browser link
-        print('1. Go to the following link: %s' % rc['verification_url'])
-        print('2. Enter user code: %s' % rc['user_code'])
+        print(f'1. Go to the following link: {rc["verification_url"]}')
+        print(f'2. Enter user code: {rc["user_code"]}')
         input('done?')  # TODO: async? check instead of asking user  # TODO: daemon mode without any interupt (error instead)
         self.__getToken(rc['device_code'])  # TODO?: raise error if false
 
@@ -88,7 +88,7 @@ class Database(object):
 
     def loadCollection(self, category='movies'):
         """Loads collection, returns list of movies."""
-        rc = self.r.get('https://api.trakt.tv/sync/collection/%s' % category).json()
+        rc = self.r.get(f'https://api.trakt.tv/sync/collection/{category}').json()
         return [m[category[:-1]] for m in rc]  # TODO?: parse data (could be usefull to unify with tvshows)
 
     def load(self, category='movies'):
@@ -97,7 +97,7 @@ class Database(object):
         # TODO: tvshows (get imdb/tmdb id from show, nobody cares to attach episode id)
         collection = self.loadCollection(category)
         movies = []
-        rc = self.r.get('https://api.trakt.tv/sync/watchlist/%s' % category).json()
+        rc = self.r.get(f'https://api.trakt.tv/sync/watchlist/{category}').json()
         for m in rc:
             if m[m['type']] not in collection:
                 movies.append({
@@ -152,7 +152,7 @@ class Database(object):
                     'tmdb': show['show']['ids']['tmdb'],
                     'tvrage': show['show']['ids']['tvrage'],
                     'seasons': {}}
-            rc2 = self.r.get('https://api.trakt.tv/shows/%s/progress/watched' % data['slug']).json()  # use trakt instead of slug
+            rc2 = self.r.get(f'https://api.trakt.tv/shows/{data["slug"]}/progress/watched').json()  # use trakt instead of slug
             for season in rc2['seasons']:
                 data['seasons'][season['number']] = {'episodes': []}
                 for episode in season['episodes']:

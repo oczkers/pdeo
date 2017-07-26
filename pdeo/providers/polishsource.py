@@ -107,5 +107,4 @@ class Provider(BaseProvider):
                              'score': score,
                              'imdb': imdb_id,
                              'url': url})  # TODO: scheme in BaseProvider
-        print(torrents)
         return torrents

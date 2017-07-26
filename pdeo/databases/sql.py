@@ -37,7 +37,7 @@ class Database(object):
         """Add movie to database."""
         # TODO: check if not a duplicate
         try:
-            self.db.execute('INSERT INTO pdeo (tmdb_id) VALUES (%s)' % tmdb_id)
+            self.db.execute(f'INSERT INTO pdeo (tmdb_id) VALUES ({tmdb_id})')
         except sqlite3.IntegrityError:  # duplicate
             return False
         return True

@@ -58,17 +58,25 @@ class Core(object):
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
         movies = self.db.load(category='movies')
-        self.logger.debug('MOVIES: %s' % movies)
+        self.logger.debug(f'MOVIES: {movies}')
         for movie in movies:
             torrent = self.provider.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
             if torrent and torrent['score'] > 0:  # TODO: i don't like this if
-                filepath = '%s/%s.torrent' % (destination, torrent['name'])
+                filepath = f'{destination}/{torrent["name"]}.torrent'
                 open(filepath, 'wb').write(torrent['torrent'])  # with?
-                print('INFO: torrent downloaded (%s).' % torrent['name'])
+                print(f'INFO: torrent downloaded ({torrent["name"]}).')
             else:
-                print('INFO: torrent not found: %s' % movie['title'])  # DEBUG
+                print(f'INFO: torrent not found: {movie["title"]}')  # DEBUG
                 pass  # torrent not found
-            input('next?')  # DEBUG
+            # input('next?')  # DEBUG
         # tvshows = self.db.load(category='')
+
+    # def getShows(self, destination='.', quality='1080p', min_size=0):
+    #     # TODO: merge into get
+    #     shows = self.db.loadShows()
+    #     for show in shows:
+    #         for season in shows['seasons']:
+    #             for episode in season['episodes']:
+    #                 torrent = self.provider.search(
 
 # TODO: logger like in fut
