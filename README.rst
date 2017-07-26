@@ -18,6 +18,10 @@ pdeo
     :target: https://codecov.io/github/oczkers/pdeo
     :alt: codecov.io
 
+.. image:: https://api.codacy.com/project/badge/Grade/042d79d8fb00475fa9903b24a1cce07c
+    :target: https://www.codacy.com/app/oczkers/pdeo?utm_source=github.com&utm_medium=referral&utm_content=oczkers/pdeo&utm_campaign=badger
+    :alt: Codacy Badge
+
 pdeo is a very simple alternative for radarr/couchpotato but using trakt as a watchlist database - automatically downloading movies from torrent.
 It is written entirely in Python.
 
