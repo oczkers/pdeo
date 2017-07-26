@@ -88,3 +88,8 @@ License
 -------
 
 GNU GPLv3
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/042d79d8fb00475fa9903b24a1cce07c
+   :alt: Codacy Badge
+   :target: https://www.codacy.com/app/oczkers/pdeo?utm_source=github.com&utm_medium=referral&utm_content=oczkers/pdeo&utm_campaign=badger
