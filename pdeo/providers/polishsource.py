@@ -98,13 +98,16 @@ class Provider(BaseProvider):
             # url = 'https://polishsource.cz/' + tds[5].findAll('a')[1]['href']
             seeders = int(tds[6].string)
             leechers = int(tds[7].string)
-            if 'Rate IMDB' in tds[1]:  # TODO: optimize
-                imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href']).group(1)
+            # if 'Rate IMDB' in tds[1]:  # TODO: optimize  |  not working
+            imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href'])
+            if imdb_id:
+                imdb_id = imdb_id.group(1)
             url = 'https://polishsource.cz/downloadssl.php?id=%s&torr=%s' % (id, name + '.torrent')
 
             score = 0
             score += (0, self.config.score['dead'])[seeders == 0]
             score += seeders  # 50 seeders == imdb, it it good idea?
+            # score += leechers  # 50 seeders == imdb, it it good idea?
             if imdb:
                 score += (0, self.config.score['imdb'])[imdb_id == imdb]  # TODO: same as details
 
