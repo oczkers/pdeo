@@ -12,6 +12,7 @@ Options:
     -h, --help                          Show this screen.
     --version                           Show version.
     --debug                             Enable debug.  # TODO: enable debug automatically if not daemon
+    --daemon                            Daemon mode - runs every 24hours and not printing anything.
     -c FILE, --config FILE              Config file. [default: ~/.config/pdeo.yml]  # TODO: implement
     -d DIR, --destination DIR           Destination dir for torrent files. [default: .]
     -q QUALITY, --quality QUALITY       Desired quality 720p/1080p/4k [default: 1080p]  # 4k might result in many fallpositives # TODO: resolution and bitrate instead? # TODO: codecs
