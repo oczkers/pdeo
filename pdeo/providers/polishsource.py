@@ -80,7 +80,7 @@ class Provider(BaseProvider):
         # entries = table.findAll('tr')  # broken tags, trs are not closed...
         # for i in entries[1:]:
         for i in rc.split('currentpage')[1].split('<tr')[2:]:
-            imdb_id = None
+            # imdb_id = None
             i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
             name = tds[1].find('b').string
@@ -99,9 +99,9 @@ class Provider(BaseProvider):
             seeders = int(tds[6].string)
             leechers = int(tds[7].string)
             # if 'Rate IMDB' in tds[1]:  # TODO: optimize  |  not working
-            imdb_id = re.search('(tt[0-9]{4,7})', tds[1].find('a', title='Rate IMDB')['href'])
+            imdb_id = tds[1].find('a', title='Rate IMDB')
             if imdb_id:
-                imdb_id = imdb_id.group(1)
+                imdb_id = re.search('(tt[0-9]{4,7})', imdb_id['href']).group(1)
             url = 'https://polishsource.cz/downloadssl.php?id=%s&torr=%s' % (id, name + '.torrent')
 
             score = 0
@@ -110,6 +110,9 @@ class Provider(BaseProvider):
             # score += leechers  # 50 seeders == imdb, it it good idea?
             if imdb:
                 score += (0, self.config.score['imdb'])[imdb_id == imdb]  # TODO: same as details
+            for c in self.config.score['custom']:
+                print(c)
+                score += (0, self.config.score['custom'][c])[c in name]
 
             torrents.append({'name': name,
                              'magnet': None,

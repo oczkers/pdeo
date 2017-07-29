@@ -39,7 +39,8 @@ class Config(object):
                                           'trusted': 10,
                                           'vip': 20,
                                           'moderator': 50,
-                                          'imdb': 50})  # TODO: custom score ('string')
+                                          'imdb': 50,
+                                          'custom': {}})  # TODO: custom score ('string')
         self.trakt = config.get('trakt', {'token': None,
                                           'token_date': None,
                                           'token_refresh': None})  # config.get('trakt', {}).get('token', None)

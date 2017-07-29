@@ -64,9 +64,9 @@ class Core(object):
             if torrent and torrent['score'] > 0:  # TODO: i don't like this if
                 filepath = f'{destination}/{torrent["name"]}.torrent'
                 open(filepath, 'wb').write(torrent['torrent'])  # with?
-                print(f'INFO: torrent downloaded ({torrent["name"]}).')
+                print(f'INFO: downloaded ({torrent["name"]}) {movie["year"]}')
             else:
-                print(f'INFO: torrent not found: {movie["title"]}')  # DEBUG
+                print(f'INFO: not found: {movie["title"]} {movie["year"]}')  # DEBUG
                 pass  # torrent not found
             # input('next?')  # DEBUG
         # tvshows = self.db.load(category='')
