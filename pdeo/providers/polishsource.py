@@ -108,11 +108,13 @@ class Provider(BaseProvider):
             score += (0, self.config.score['dead'])[seeders == 0]
             score += seeders  # 50 seeders == imdb, it it good idea?
             # score += leechers  # 50 seeders == imdb, it it good idea?
-            if imdb:
-                score += (0, self.config.score['imdb'])[imdb_id == imdb]  # TODO: same as details
+            if imdb and imdb_id:
+                if imdb == imdb_id:
+                    score += self.config.score['imdb']
+                else:
+                    score -= self.config.score['imdb']
             for c in self.config.score['custom']:
-                print(c)
-                score += (0, self.config.score['custom'][c])[c in name]
+                score += (0, self.config.score['custom'][c])[c in name.lower()]
 
             torrents.append({'name': name,
                              'magnet': None,

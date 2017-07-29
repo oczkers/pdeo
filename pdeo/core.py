@@ -89,3 +89,7 @@ class Core(object):
                 input('next?')  # DEBUG
 
 # TODO: logger like in fut
+# TODO: imdb_id -> tmdb_id  http://api.themoviedb.org/3/movie/tt0137523?api_key=###
+# TODO: filmweb  https://github.com/lopezloo/pyfilmweb
+# TODO: upload torrent file via rtorrent api etc.
+# TODO: verify year (and get english title?) in tmdb
