@@ -112,7 +112,8 @@ class Provider(BaseProvider):
                 if imdb == imdb_id:
                     score += self.config.score['imdb']
                 else:
-                    score -= self.config.score['imdb']
+                    # score -= self.config.score['imdb']
+                    continue
             for c in self.config.score['custom']:
                 score += (0, self.config.score['custom'][c])[c in name.lower()]
 
