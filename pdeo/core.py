@@ -9,6 +9,8 @@ This module implements the pdeo basic methods.
 """
 
 
+from clint.textui import colored  # this should be in cli
+
 from .logger import logger
 from .config import Config
 from .databases import trakt  # TODO: mysql, sqlite
@@ -64,9 +66,9 @@ class Core(object):
             if torrent and torrent['score'] > 0:  # TODO: i don't like this if
                 filepath = f'{destination}/{torrent["name"]}.torrent'
                 open(filepath, 'wb').write(torrent['torrent'])  # with?
-                print(f'INFO: downloaded ({torrent["name"]}) {movie["year"]}')
+                print(colored.green(f'INFO: {torrent["name"]} {movie["year"]}'))
             else:
-                print(f'INFO: not found: {movie["title"]} {movie["year"]}')  # DEBUG
+                print(colored.red(f'INFO: {movie["title"]} {movie["year"]}'))  # DEBUG
                 pass  # torrent not found
             # input('next?')  # DEBUG
         # tvshows = self.db.load(category='')
@@ -82,11 +84,10 @@ class Core(object):
                 if torrent and torrent['score'] > 0:
                     filepath = f'{destination}/{torrent["name"]}.torrent'
                     open(filepath, 'wb').write(torrent['torrent'])  # with?
-                    print(f'INFO: torrent downloaded ({torrent["name"]}).')
+                    print(colored.green(f'INFO: {torrent["name"]}.'))
                 else:
-                    print(f'INFO: torrent not found: {episode["title"]}')  # DEBUG
+                    print(colored.red(f'INFO: {episode["title"]}'))  # DEBUG
                     pass  # torrent not found
-                input('next?')  # DEBUG
 
 # TODO: logger like in fut
 # TODO: imdb_id -> tmdb_id  http://api.themoviedb.org/3/movie/tt0137523?api_key=###

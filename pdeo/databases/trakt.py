@@ -138,6 +138,8 @@ class Database(object):
         # !!TODO!!: Refactor dict - every episode has it's own record instead of sub-sub-record
         # TODO: ability to return not aired too (leaks).
         # TODO: drop seasons, use only episodes {title, id, episodes[]}
+        # TODO: add watchlist, not being in progress
+        # TODO: optional in progress, not in watchlist (below code)
         collection = self.loadCollectionShows()
         rc = self.r.get('https://api.trakt.tv/users/hidden/progress_watched', params={'type': 'show'}).json()  # TODO?: calendar, progress_collected, recommendations
         hidden = [i['show']['title'] for i in rc]
