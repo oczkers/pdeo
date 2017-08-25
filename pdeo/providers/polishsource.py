@@ -54,6 +54,7 @@ class Provider(BaseProvider):
         """Search for torrents. Return [{name, magnet, size, seeders, leechers, score, imdb, url}]."""
         # TODO: async
         # TODO?: replace min_size with min_bitrate (calucate size/time)
+        # TODO: check more pages if lowest size > min_size
         if season and episode:  # TODO: ability to download whole season (episode=None)
             cat = 'cat39'
             search = f'{title} s{season:02d}e{episode:02d} {year or ""} {quality or ""}'
@@ -101,7 +102,11 @@ class Provider(BaseProvider):
             # if 'Rate IMDB' in tds[1]:  # TODO: optimize  |  not working
             imdb_id = tds[1].find('a', title='Rate IMDB')
             if imdb_id:
-                imdb_id = re.search('(tt[0-9]{4,7})', imdb_id['href']).group(1)
+                imdb_id = re.search('(tt[0-9]{4,7})', imdb_id['href'])
+                if imdb_id:
+                    imdb_id = imdb_id.group(1)  # TODO: need refactorization
+                else:  # wrong data, cannot parse imdb_id string
+                    imdb_id = 'tt0000'  # this is probably shit upload if uploader cannot even set proper imdb_id
             url = 'https://polishsource.cz/downloadssl.php?id=%s&torr=%s' % (id, name + '.torrent')
 
             score = 0
