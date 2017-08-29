@@ -89,26 +89,43 @@ class Database(object):
     def loadCollection(self, category='movies'):
         """Loads collection, returns list of movies."""
         rc = self.r.get(f'https://api.trakt.tv/sync/collection/{category}').json()
-        return [m[category[:-1]] for m in rc]  # TODO?: parse data (could be usefull to unify with tvshows)
+        if category == 'movies':
+            items = [i[category[:-1]] for i in rc]
+        elif category == 'shows':
+            items = []
+            for i in rc:
+                item = i[category[:-1]]
+                for s in i['seasons']:
+                    for e in s['episodes']:
+                        item['season'] = s['number']
+                        item['number'] = e['number']
+                        del item['year']  # there is no year in watchlist episode object, we have to keep compatibility
+        else:
+            adsasdasd_unknown_category
+            # raise
+        return items  # TODO?: parse data (could be usefull to unify with tvshows)
 
     def load(self, category='movies'):
         """Loads watchlist."""
         # http://docs.trakt.apiary.io/#reference/sync/get-watchlist
         # TODO: tvshows (get imdb/tmdb id from show, nobody cares to attach episode id)
+        # TODO?: dont parse just attach 'type' object (with corrected ids and year for shows)
+        if category == 'shows':
+            category = 'episodes'
         collection = self.loadCollection(category)
-        movies = []
+        items = []
         rc = self.r.get(f'https://api.trakt.tv/sync/watchlist/{category}').json()
-        for m in rc:
-            if m[m['type']] not in collection:
-                movies.append({
-                    'date': m['listed_at'],  # TODO: datetime
-                    'category': m['type'],
-                    'title': m[m['type']]['title'],
-                    'year': m[m['type']]['year'],
-                    'tmdb': m[m['type']]['ids'].get('tmdb'),
-                    'imdb': m[m['type']]['ids'].get('imdb'),
+        for i in rc:
+            if i[i['type']] not in collection:
+                items.append({
+                    'date': i['listed_at'],  # TODO: datetime
+                    'category': i['type'],
+                    'title': i[i['type']]['title'],
+                    'year': i[i['type']].get('year') or i['show']['year'],  # TODO?: show.year in get instead of or?
+                    'tmdb': i[i['type']]['ids'].get('tmdb'),
+                    'imdb': i[i['type']]['ids'].get('imdb'),
                 })
-        return movies
+        return items
 
     def loadCollectionShows(self):
         """Loads all episodes collection."""
@@ -133,7 +150,7 @@ class Database(object):
             shows[data['title']] = episodes
         return shows
 
-    def loadShows(self):
+    def loadAllShows(self):
         """Loads all aired & not watched & not in collection episodes."""
         # !!TODO!!: Refactor dict - every episode has it's own record instead of sub-sub-record
         # TODO: ability to return not aired too (leaks).
@@ -149,7 +166,7 @@ class Database(object):
             episodes = []
             if show['show']['title'] in hidden:
                 continue
-            rc2 = self.r.get(f'https://api.trakt.tv/shows/{show["show"]["ids"]["slug"]}/progress/watched').json()  # use trakt instead of slug
+            rc2 = self.r.get(f'https://api.trakt.tv/shows/{show["show"]["ids"]["slug"]}/progress/watched').json()  # use trakt id instead of slug
             for season in rc2['seasons']:
                 for episode in season['episodes']:
                     data = {'title': show['show']['title'],
