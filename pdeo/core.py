@@ -59,6 +59,7 @@ class Core(object):
         # TODO?: proper convert magnet to torrent file
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
+        # movies = self.db.load(category='shows')
         movies = self.db.load(category='movies')
         self.logger.debug(f'MOVIES: {movies}')
         for movie in movies:
@@ -66,7 +67,7 @@ class Core(object):
             if torrent and torrent['score'] > 0:  # TODO: i don't like this if
                 filepath = f'{destination}/{torrent["name"]}.torrent'
                 open(filepath, 'wb').write(torrent['torrent'])  # with?
-                print(colored.green(f'INFO: {torrent["name"]} {movie["year"]}'))
+                print(colored.green(f'INFO: {movie["title"]}: {torrent["name"]} {movie["year"]}'))
             else:
                 print(colored.red(f'INFO: {movie["title"]} {movie["year"]}'))  # DEBUG
                 pass  # torrent not found

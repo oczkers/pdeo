@@ -99,10 +99,12 @@ class Database(object):
                     for e in s['episodes']:
                         item['season'] = s['number']
                         item['number'] = e['number']
-                        del item['year']  # there is no year in watchlist episode object, we have to keep compatibility
+                        # del item['year']  # there is no year in watchlist episode object, we have to keep compatibility
+                        items.append(item)
         else:
             adsasdasd_unknown_category
             # raise
+        print(items)  # DEBUG
         return items  # TODO?: parse data (could be usefull to unify with tvshows)
 
     def load(self, category='movies'):
@@ -110,18 +112,21 @@ class Database(object):
         # http://docs.trakt.apiary.io/#reference/sync/get-watchlist
         # TODO: tvshows (get imdb/tmdb id from show, nobody cares to attach episode id)
         # TODO?: dont parse just attach 'type' object (with corrected ids and year for shows)
-        if category == 'shows':
-            category = 'episodes'
         collection = self.loadCollection(category)
         items = []
+        if category == 'shows':  # separate request for shows, seasons, episodes...
+            category = 'episodes'
         rc = self.r.get(f'https://api.trakt.tv/sync/watchlist/{category}').json()
+        print(rc)
+        # addas
         for i in rc:
             if i[i['type']] not in collection:
                 items.append({
                     'date': i['listed_at'],  # TODO: datetime
                     'category': i['type'],
                     'title': i[i['type']]['title'],
-                    'year': i[i['type']].get('year') or i['show']['year'],  # TODO?: show.year in get instead of or?
+                    # 'year': i[i['type']].get('year') or i['show']['year'],  # TODO?: show.year in get instead of or?
+                    'year': i[i['type']].get('year') or i.get('show', {}).get('year'),  # TODO?: show.year in get instead of or?
                     'tmdb': i[i['type']]['ids'].get('tmdb'),
                     'imdb': i[i['type']]['ids'].get('imdb'),
                 })
@@ -152,7 +157,6 @@ class Database(object):
 
     def loadAllShows(self):
         """Loads all aired & not watched & not in collection episodes."""
-        # !!TODO!!: Refactor dict - every episode has it's own record instead of sub-sub-record
         # TODO: ability to return not aired too (leaks).
         # TODO: drop seasons, use only episodes {title, id, episodes[]}
         # TODO: add watchlist, not being in progress
