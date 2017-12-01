@@ -27,7 +27,7 @@ class Provider(BaseProvider):
         if self.config.polishsource['cookies']:
             self.r.cookies = requests.cookies.cookiejar_from_dict(self.config.polishsource['cookies'])
             rc = self.r.get('https://polishsource.cz').text
-        elif not username or passwd:
+        elif not (username or passwd):
             raise PdeoError('Username & password or cookies is required for this provider.')  # TODO: PdeoError -> ProviderError
         else:  # TODO: _login
             print('no cookies')
@@ -85,6 +85,8 @@ class Provider(BaseProvider):
             i = BeautifulSoup(i, 'html.parser')  # <3? # TODO: lxml if available
             tds = i.findAll('td')
             name = tds[1].find('b').string
+            if title.replace(' ', '.').lower() not in name.lower():  # might be wrong for long titles, maybe score lowering only?
+                continue
             if quality and quality not in name:
                 continue
             # id = re.match('details.php\?id=([0-9]+)', tds[1].find('a')['href']).group(1)

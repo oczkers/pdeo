@@ -19,6 +19,8 @@ Options:
     --min_size SIZE                     Mininmum size in GiB required. [default: 6]  # TODO: separate min_size for shows # TODO: replace with bitrate, attach to quality.  # TODO?: max_size
     --strict                            Strict search, don't download if uncertain.  # TODO: implement this or somekind of score
     -p PROVIDER, --provider PROVIDER    Choose provider.
+    -U USERNAME, --user USERNAME        Provider username (needed only once).
+    -P PASSWORD, --password PASSWORD    Provider password (needed only once).
 
 Trakt options:
 
@@ -36,8 +38,8 @@ from .core import Core
 version_text = '%s v%s' % (__title__, __version__)
 
 
-def run(provider, database, destination, quality, min_size, debug):
-    p = Core(database=database, provider=provider, debug=debug)
+def run(provider, database, destination, quality, min_size, debug, username, passwd):
+    p = Core(database=database, provider=provider, debug=debug, username=username, passwd=passwd)
     p.get(destination=destination, quality=quality, min_size=min_size)
     p.getShows(destination=destination, quality=quality, min_size=min_size / 2)
 
@@ -51,7 +53,7 @@ def __main__():
         sys.exit('Mysql / Sqlite is not implementet yet.')
     else:
         database = 'trakt'
-    run(provider=args['--provider'], database=database, destination=args['--destination'], quality=args['--quality'], min_size=int(args['--min_size']), debug=args['--debug'])
+    run(provider=args['--provider'], database=database, destination=args['--destination'], quality=args['--quality'], min_size=int(args['--min_size']), debug=args['--debug'], username=args['--user'], passwd=args['--password'])
 
 
 if __name__ == '__main__':

@@ -19,14 +19,14 @@ from .exceptions import PdeoError
 
 
 class Core(object):
-    def __init__(self, database=None, provider=None, debug=False):
+    def __init__(self, database=None, provider=None, debug=False, username=None, passwd=None):
         self.config = Config()  # TODO: config_file
         if database:
             self.config.database = database
         self.db = self._database(self.config.database)
         if provider:
             self.config.provider = provider
-        self.provider = self._provider(self.config.provider)
+        self.provider = self._provider(self.config.provider, username, passwd)
 
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
