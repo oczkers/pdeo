@@ -37,6 +37,8 @@ class Database(object):
         self.r = requests.Session()
         if not self.config.trakt['token']:
             self.__authenticate()
+        elif self.config.trakt['token_refresh']:  # use only if necessary (token_date)
+            self.__getToken(refresh_token=self.config.trakt['token_refresh'])
         self.r.headers = self.__headers
 
     @property
@@ -48,12 +50,19 @@ class Database(object):
             'trakt-api-key': client_id
         }
 
-    def __getToken(self, code):
+    def __getToken(self, code=None, refresh_token=None):
         """Get token using device_code or refresh_token."""
-        data = {'code': code,
-                'client_id': client_id,
+        data = {'client_id': client_id,
                 'client_secret': client_secret}
-        rc = self.r.post('https://api.trakt.tv/oauth/device/token', data=data)
+        if code:
+            data['code'] = code
+            data['grant_type'] = 'authorization_code'
+            url = 'https://api.trakt.tv/oauth/device/token'
+        elif refresh_token:
+            data['refresh_token'] = refresh_token
+            data['grant_type'] = 'refresh_token'
+            url = 'https://api.trakt.tv/oauth/token'
+        rc = self.r.post(url, data=data)
         if rc.status_code == 200:
             rc = rc.json()
             self.config.trakt['token'] = rc['access_token']
@@ -69,6 +78,8 @@ class Database(object):
             pass
         else:
             # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to often, respect interval
+            print(rc.status_code)
+            print(rc.text)
             return False
 
     def __authenticate(self):  # shouldn't this be private?
@@ -88,7 +99,10 @@ class Database(object):
 
     def loadCollection(self, category='movies'):
         """Loads collection, returns list of movies."""
-        rc = self.r.get(f'https://api.trakt.tv/sync/collection/{category}').json()
+        rc = self.r.get(f'https://api.trakt.tv/sync/collection/{category}')
+        print(rc.status_code)
+        print(rc.content)
+        rc = rc.json()
         if category == 'movies':
             items = [i[category[:-1]] for i in rc]
         elif category == 'shows':
