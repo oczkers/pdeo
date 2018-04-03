@@ -79,7 +79,7 @@ class BaseProvider(object):
     def search(self, title, season=None, episode=None, year=None, imdb=None, quality=None, min_size=None):
         """Search the one and only torrent. Return torrent file."""
         # TODO?: search(movies=None, shows=None)  movies and shows should be objects/specific dicts
-        title = title.replace(':', '').replace(',', '').replace('.', '')  # TODO?: remove ' and other special signs before searching
+        title = title.replace(':', '').replace(',', '').replace('.', '').replace("'", '')  # TODO?: remove ' and other special signs before searching
         torrents = self.searchAll(title=title, season=season, episode=episode, year=year, imdb=imdb, quality=quality, min_size=min_size)
         if torrents:
             torrent = self.__sort(torrents)[0]
