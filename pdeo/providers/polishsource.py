@@ -60,7 +60,10 @@ class Provider(BaseProvider):
             search = f'{title} s{season:02d}e{episode:02d} {year or ""} {quality or ""}'
         else:
             search = f'{title} {year or ""} {quality or ""}'
-            cat = 'c11'
+            if quality == '2160p':
+                cat = 'c46'  # 4k
+            else:
+                cat = 'c11'  # fullhd
         torrents = []
         params = {cat: 1,  # movies/hd cat11  | tv/hd cat39
                   'search': search,
