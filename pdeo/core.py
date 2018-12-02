@@ -51,7 +51,7 @@ class Core(object):
             raise PdeoError('Unknown provider.')
         return provider.Provider(username=username, passwd=passwd)
 
-    def get(self, destination='.', quality='1080p', min_size=0):
+    def get(self, destination='.', quality=None, min_size=0):
         """Get best torrent. Returns None or {name, magnet, score, size, seeders, leechers}."""  # TODO?: torrent_file
         # TODO: ability to use other/few providers
         # TODO?: initializate provider before calling this?
@@ -60,6 +60,8 @@ class Core(object):
         # TODO?: ability to search by imdb_id (moviedatabse request first to get metadata) https://www.themoviedb.org/documentation/api
         # TODO?: ability to serach without year (might be necessary for old rips but should we care?)
         # movies = self.db.load(category='shows')
+        if not quality:
+            quality = self.config.quality
         movies = self.db.load(category='movies')
         self.logger.debug(f'MOVIES: {movies}')
         for movie in movies:

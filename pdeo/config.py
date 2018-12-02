@@ -47,6 +47,7 @@ class Config(object):
         self.provider = config.get('provider', 'thepiratebay')
         self.database = config.get('database', 'trakt')
         self.polishsource = config.get('polishsource', {'cookies': None})
+        self.omdb_key = config.get('omdb_key', None)
         # self.save()  # save to add new values, correct structure etc.
 
     def save(self):
@@ -58,5 +59,6 @@ class Config(object):
                   'trakt': self.trakt,
                   'provider': self.provider,
                   'database': self.database,
-                  'polishsource': self.polishsource}
+                  'polishsource': self.polishsource,
+                  'omdb_key': self.omdb_key}
         yaml.safe_dump(config, open(self.config_file, 'w'), default_flow_style=False)

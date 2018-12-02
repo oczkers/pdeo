@@ -97,6 +97,14 @@ class Database(object):
         # token is valid for 3 months
         self.__getToken(self.token_refresh)  # TODO?: raise error if false
 
+    def omdb(self, title):  # MOVE TO SEPARATE MODULE
+        print(title)
+        params = {'apikey': self.config.omdb_key,
+                  't': title}
+        rc = self.r.get('http://omdbapi.com', params=params).json()
+        print(rc)
+        return rc
+
     def loadCollection(self, category='movies'):
         """Loads collection, returns list of movies."""
         rc = self.r.get(f'https://api.trakt.tv/sync/collection/{category}')
@@ -135,12 +143,13 @@ class Database(object):
         # addas
         for i in rc:
             if i[i['type']] not in collection:
+                year = self.omdb(title=i[i['type']]['title']).get('Year', i[i['type']].get('year'))  # shows
                 items.append({
                     'date': i['listed_at'],  # TODO: datetime
                     'category': i['type'],
                     'title': i[i['type']]['title'],
                     # 'year': i[i['type']].get('year') or i['show']['year'],  # TODO?: show.year in get instead of or?
-                    'year': i[i['type']].get('year') or i.get('show', {}).get('year'),  # TODO?: show.year in get instead of or?
+                    'year': year or i.get('show', {}).get('year'),  # TODO?: show.year in get instead of or?
                     'tmdb': i[i['type']]['ids'].get('tmdb'),
                     'imdb': i[i['type']]['ids'].get('imdb'),
                 })

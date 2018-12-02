@@ -15,7 +15,7 @@ Options:
     --daemon                            Daemon mode - runs every 24hours and not printing anything.
     -c FILE, --config FILE              Config file. [default: ~/.config/pdeo.yml]  # TODO: implement
     -d DIR, --destination DIR           Destination dir for torrent files. [default: .]
-    -q QUALITY, --quality QUALITY       Desired quality 720p/1080p/4k [default: 1080p]  # 4k might result in many fallpositives # TODO: resolution and bitrate instead? # TODO: codecs
+    -q QUALITY, --quality QUALITY       Desired quality 720p/1080p/2160p  # TODO: resolution and bitrate instead? # TODO: codecs
     --min_size SIZE                     Mininmum size in GiB required. [default: 6]  # TODO: separate min_size for shows # TODO: replace with bitrate, attach to quality.  # TODO?: max_size
     --strict                            Strict search, don't download if uncertain.  # TODO: implement this or somekind of score
     -p PROVIDER, --provider PROVIDER    Choose provider.
