@@ -33,6 +33,7 @@ client_secret = '8fdbde42366852783faaf1612509b06d4211a9aff747ba1740056a72be859cf
 class Database(object):
     def __init__(self):
         # TODO?: saving token, token_refresh
+        # TODO: remove collected items from watchlist
         self.config = Config()
         self.r = requests.Session()
         if not self.config.trakt['token']:
@@ -97,10 +98,12 @@ class Database(object):
         # token is valid for 3 months
         self.__getToken(self.token_refresh)  # TODO?: raise error if false
 
-    def omdb(self, title):  # MOVE TO SEPARATE MODULE
-        print(title)
-        params = {'apikey': self.config.omdb_key,
-                  't': title}
+    def omdb(self, title=None, imdb_id=None):  # MOVE TO SEPARATE MODULE
+        params = {'apikey': self.config.omdb_key}
+        if title:
+            params['t'] = title
+        elif imdb_id:
+            params['i'] = imdb_id
         rc = self.r.get('http://omdbapi.com', params=params).json()
         print(rc)
         return rc
@@ -143,7 +146,10 @@ class Database(object):
         # addas
         for i in rc:
             if i[i['type']] not in collection:
-                year = self.omdb(title=i[i['type']]['title']).get('Year', i[i['type']].get('year'))  # shows
+                if i[i['type']]['ids']['imdb']:
+                    year = self.omdb(imdb_id=i[i['type']]['ids']['imdb']).get('Year', i[i['type']].get('year'))  # shows
+                else:  # by title only
+                    year = self.omdb(title=i[i['type']]['title']).get('Year', i[i['type']].get('year'))  # shows
                 items.append({
                     'date': i['listed_at'],  # TODO: datetime
                     'category': i['type'],
