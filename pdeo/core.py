@@ -9,13 +9,15 @@ This module implements the pdeo basic methods.
 """
 
 
-from clint.textui import colored  # this should be in cli
+from blessings import Terminal  # this should be in cli
 
 from .logger import logger
 from .config import Config
 from .databases import trakt  # TODO: mysql, sqlite
 from .providers import thepiratebay, polishsource  # TODO?: vpn/proxy
 from .exceptions import PdeoError
+
+colored = Terminal()
 
 
 class Core(object):
