@@ -2,3 +2,4 @@ requests>=2.2.1
 docopt
 beautifulsoup4
 pyyaml
+blessings
