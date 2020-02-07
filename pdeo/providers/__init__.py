@@ -8,7 +8,7 @@ This module implements the pdeo provider base methods.
 
 """
 
-import requests
+import httpx
 import re
 
 from ..config import Config
@@ -39,7 +39,7 @@ class BaseProvider(object):
         # self.logger = logger(child=True)
         self.logger = logger(logger_name)
         self.config = Config()
-        self.r = requests.Session()
+        self.r = httpx.Client()
         self.r.headers = headers
         self.config.save()
 

@@ -8,7 +8,7 @@ This module implements the pdeo torrentday.com provider methods.
 
 """
 
-import requests
+# import requests
 
 from . import BaseProvider
 

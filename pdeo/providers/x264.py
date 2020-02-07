@@ -8,7 +8,7 @@ This module implements the pdeo x264.me provider methods.
 
 """
 
-import requests
+# import requests
 
 from . import BaseProvider
 

@@ -1,4 +1,4 @@
-requests>=2.2.1
+httpx
 docopt
 beautifulsoup4
 pyyaml

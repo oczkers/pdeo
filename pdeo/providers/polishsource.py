@@ -10,7 +10,6 @@ This module implements the pdeo polishsource.cz provider methods.
 
 import os
 import re
-import requests
 from bs4 import BeautifulSoup
 
 from . import BaseProvider
@@ -25,7 +24,7 @@ class Provider(BaseProvider):
     def login(self, username, passwd):
         """Login using saved cookies or username&password."""
         if self.config.polishsource['cookies']:
-            self.r.cookies = requests.cookies.cookiejar_from_dict(self.config.polishsource['cookies'])
+            self.r.cookies.update(self.config.polishsource['cookies'])
             rc = self.r.get('https://polishsource.cz').text
         elif not (username or passwd):
             raise PdeoError('Username & password or cookies is required for this provider.')  # TODO: PdeoError -> ProviderError
@@ -41,7 +40,7 @@ class Provider(BaseProvider):
                     'vImageCodP': captcha_text}
             rc = self.r.post('https://polishsource.cz/takelogin.php', data=data).text
         if 'logout.php' in rc:
-            self.config.polishsource['cookies'] = self.r.cookies.get_dict()  # this is very simple method, no domain, expire date is saved
+            self.config.polishsource['cookies'] = {cookie.name: cookie.value for cookie in self.r.cookies.jar}  # this is very simple method, no domain, expire date is saved
             self.config.save()
             return True
         # elif wrongPasswd: login with username

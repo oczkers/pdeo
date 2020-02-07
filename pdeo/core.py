@@ -8,7 +8,8 @@ This module implements the pdeo basic methods.
 
 """
 
-
+import httpx
+import re
 from blessings import Terminal  # this should be in cli
 
 from .logger import logger
@@ -22,6 +23,7 @@ colored = Terminal()
 
 class Core(object):
     def __init__(self, database=None, provider=None, debug=False, username=None, passwd=None):
+        # TODO?: cache movie details (year at least)
         self.config = Config()  # TODO: config_file
         if database:
             self.config.database = database
@@ -67,6 +69,9 @@ class Core(object):
         movies = self.db.load(category='movies')
         self.logger.debug(f'MOVIES: {movies}')
         for movie in movies:
+            if quality != '2160p' and self.uhdPlanned(movie['title'], movie['year']) is True:  # this is ugly
+                print(colored.yellow(f'INFO: {movie["title"]} {movie["year"]} UHD is planned, skipping for now.'))
+                continue
             torrent = self.provider.search(title=movie['title'], year=movie['year'], imdb=movie['imdb'], quality=quality, min_size=min_size)
             if torrent and torrent['score'] > 0:  # TODO: i don't like this if
                 filepath = f'{destination}/{torrent["name"]}.torrent'
@@ -93,6 +98,23 @@ class Core(object):
                 else:
                     print(colored.red(f'INFO: {episode["title"]}'))  # DEBUG
                     pass  # torrent not found
+
+    def uhdPlanned(self, title, year):
+        """Check if 4k is going to be released on bluray."""
+        # TODO: validate based on somekind of id (imdb?)
+        data = {'section': '4k',  # bluraymovies
+                'userid': -1,
+                'country': 'US',
+                'keyword': title}
+        rc = httpx.post('https://www.blu-ray.com/search/quicksearch.php', data=data).text
+        # print(rc)  # DEBUG
+        if rc != '':
+            for i in re.findall(r'&nbsp;(.+?) \(([0-9]{4})\)$', rc, re.MULTILINE):
+                print(f'possible uhd found: {i}')  # DEBUG
+                if i[1] == year:
+                    return True
+        return False
+
 
 # TODO: logger like in fut
 # TODO: imdb_id -> tmdb_id  http://api.themoviedb.org/3/movie/tt0137523?api_key=###

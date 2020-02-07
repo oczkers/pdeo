@@ -8,7 +8,7 @@ This module implements the pdeo trakt.tv backend for database methods.
 
 """
 
-import requests
+import httpx
 
 from ..config import Config
 # from ..exceptions import PdeoError
@@ -35,7 +35,7 @@ class Database(object):
         # TODO?: saving token, token_refresh
         # TODO: remove collected items from watchlist
         self.config = Config()
-        self.r = requests.Session()
+        self.r = httpx.Client()
         if not self.config.trakt['token']:
             self.__authenticate()
         elif self.config.trakt['token_refresh']:  # use only if necessary (token_date)
