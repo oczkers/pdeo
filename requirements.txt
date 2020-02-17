@@ -1,5 +1,4 @@
 httpx
-docopt
 beautifulsoup4
 pyyaml
 blessings
