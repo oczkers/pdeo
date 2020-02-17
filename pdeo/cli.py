@@ -28,8 +28,8 @@ Trakt options:
 
 # TODO: single movie search
 
-import sys
-from docopt import docopt
+# import sys
+import argparse
 
 from . import __title__, __version__
 from .core import Core
@@ -45,15 +45,34 @@ def run(provider, database, destination, quality, min_size, debug, username, pas
 
 
 def __main__():
-    args = docopt(__doc__, version=version_text)
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--debug', action="store_true", default=False)
+    parser.add_argument('--daemon', action="store_true", default=False)
+    parser.add_argument('-c', '--config', default='~/.config/pdeo.yml')
+    parser.add_argument('-d', '--destination', default='.')
+    parser.add_argument('-q', '--quality')
+    parser.add_argument('--min_size', type=int, default=6)
+    parser.add_argument('--strict', action="store_true", default=False)
+    parser.add_argument('-p', '--provider')
+    parser.add_argument('-U', '--user')
+    parser.add_argument('-P', '--password')
+    args = parser.parse_args()
     print(args)
-    if args['mysql'] or args['sqlite']:
-        # TODO: sql database
-        # database = sql
-        sys.exit('Mysql / Sqlite is not implementet yet.')
-    else:
-        database = 'trakt'
-    run(provider=args['--provider'], database=database, destination=args['--destination'], quality=args['--quality'], min_size=int(args['--min_size']), debug=args['--debug'], username=args['--user'], passwd=args['--password'])
+    # if args['mysql'] or args['sqlite']:
+    #     # TODO: sql database
+    #     # database = sql
+    #     sys.exit('Mysql / Sqlite is not implementet yet.')
+    # else:
+    #     database = 'trakt'
+    database = 'trakt'
+    run(provider=args.provider,
+        database=database,
+        destination=args.destination,
+        quality=args.quality,
+        min_size=args.min_size,
+        debug=args.debug,
+        username=args.user,
+        passwd=args.password)
 
 
 if __name__ == '__main__':

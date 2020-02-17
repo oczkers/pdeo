@@ -110,7 +110,7 @@ class Core(object):
         # print(rc)  # DEBUG
         if rc != '':
             for i in re.findall(r'&nbsp;(.+?) \(([0-9]{4})\)$', rc, re.MULTILINE):
-                print(f'possible uhd found: {i}')  # DEBUG
+                print(f'possible uhd found, year not checked yet: {i}')  # DEBUG
                 if i[1] == year:
                     return True
         return False
