@@ -66,6 +66,7 @@ class Database(object):
         rc = self.r.post(url, data=data)
         if rc.status_code == 200:
             rc = rc.json()
+            print(rc)
             self.config.trakt['token'] = rc['access_token']
             # needed for refresh without asking user
             self.config.trakt['token_refresh'] = rc['refresh_token']
@@ -74,8 +75,13 @@ class Database(object):
             # rc['created_at']  # timestamp
             # rc['expires_in']  # 7200 = 3 months?
             return True
-        elif rc.status_code == 400:  # waiting for user accept
+        elif rc.status_code == 400:  # waiting for user accept OR ERROR
             # TODO: sleep, recheck or whatever
+            rc = rc.json()
+            if rc['error'] == 'invalid_grant' and rc['error_description'] == 'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.':
+                print('TRAKT: all tokens probably expired, refreshing')
+                self.__authenticate()
+                return True
             pass
         else:
             # 404 invalid_code | 409 already used | 410 expired | 418 denied | 429 asking to often, respect interval
